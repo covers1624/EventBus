@@ -1,7 +1,6 @@
 package net.covers1624.eventbus.util;
 
 import net.covers1624.eventbus.api.Environment;
-import net.covers1624.eventbus.api.EventBus;
 import net.covers1624.eventbus.api.Named;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;

@@ -278,6 +278,7 @@ public class ClassGenerator {
             }
             methodInsn(opcode, method);
         }
+
         public void methodInsn(int opcode, Method method) {
             methodInsn(opcode, Type.getType(method.getDeclaringClass()), method.getName(), Type.getType(method), Modifier.isInterface(method.getDeclaringClass().getModifiers()));
         }

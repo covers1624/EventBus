@@ -2,7 +2,6 @@ package net.covers1624.eventbus.util;
 
 import com.google.common.collect.ImmutableMap;
 import net.covers1624.eventbus.api.Environment;
-import net.covers1624.eventbus.api.EventBus;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.jetbrains.annotations.Nullable;

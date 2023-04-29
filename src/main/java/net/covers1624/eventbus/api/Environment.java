@@ -43,7 +43,7 @@ public interface Environment {
 
     /**
      * Responsible for defining classes.
-     *
+     * <p>
      * It is expected that this any classes defined by this are
      * accessible by any other class defined by this.
      */
