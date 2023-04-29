@@ -1,7 +1,6 @@
 package net.covers1624.eventbus.internal;
 
-import net.covers1624.eventbus.api.Event;
-import net.covers1624.eventbus.api.EventInvoker;
+import net.covers1624.eventbus.api.EventListener;
 
 import java.util.LinkedList;
 import java.util.List;
@@ -9,7 +8,7 @@ import java.util.List;
 /**
  * Created by covers1624 on 10/4/21.
  */
-public abstract class EventListenerList implements EventInvoker {
+public abstract class EventListenerList implements EventListener {
 
     private final RegisteredEvent event;
 
@@ -42,7 +41,7 @@ public abstract class EventListenerList implements EventInvoker {
         synchronized (event) {
             if (!invalid && getInvoker() != null) return;
 
-            setInvoker(EventListenerGenerator.generateEventInvoker(event));
+            setInvoker(EventListenerGenerator.generateEventFactory(event));
             invalid = false;
         }
     }

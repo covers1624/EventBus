@@ -2,11 +2,11 @@ package net.covers1624.eventbus.internal;
 
 import com.google.common.collect.BiMap;
 import com.google.common.collect.HashBiMap;
+import com.google.common.collect.Maps;
 import net.covers1624.eventbus.api.*;
 import net.covers1624.eventbus.util.MethodParamLookup;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
-import org.jetbrains.annotations.Nullable;
 
 import java.lang.reflect.Method;
 import java.lang.reflect.Modifier;
@@ -27,10 +27,11 @@ public class EventBusImpl implements EventBus {
     final Environment environment;
     final MethodParamLookup paramLookup;
 
-    private final BiMap<Class<? extends EventInvoker>, Class<? extends Event>> invokerToEvent = HashBiMap.create();
-    private final BiMap<Class<? extends Event>, Class<? extends EventInvoker>> eventToInvoker = invokerToEvent.inverse();
+    private final BiMap<Class<? extends EventFactory<?>>, Class<? extends Event>> factoryToEvent = Maps.synchronizedBiMap(HashBiMap.create());
+    private final BiMap<Class<? extends Event>, Class<? extends EventFactory<?>>> eventToFactory = factoryToEvent.inverse();
 
     private final Map<Class<? extends Event>, RegisteredEvent> registeredEvents = new ConcurrentHashMap<>();
+    private final Map<Class<? extends EventListener<?>>, RegisteredEvent> eventsByListener = new ConcurrentHashMap<>();
 
     public EventBusImpl(Environment environment) {
         this.environment = environment;
@@ -38,33 +39,19 @@ public class EventBusImpl implements EventBus {
     }
 
     @Override
-    public <T extends EventInvoker> T registerEvent(Class<T> factoryClass, Class<? extends Event> eventClass) {
-        // Preconditions
-        if (invokerToEvent.containsKey(factoryClass)) {
-            throw new IllegalArgumentException(String.format("Event factory '%s' is already registered for event '%s'.", factoryClass.getName(), invokerToEvent.get(factoryClass).getName()));
-        }
-        if (eventToInvoker.containsKey(eventClass)) {
-            throw new IllegalArgumentException(String.format("Event class '%s' is already registered with factory '%s'.", eventClass.getName(), eventToInvoker.get(eventClass).getName()));
-        }
-        invokerToEvent.put(factoryClass, eventClass);
+    public <T extends EventFactory<T>> T registerEvent(Class<T> factoryClass, Class<? extends Event> eventClass) {
+        checkNotAlreadyRegistered(factoryClass, eventClass);
+        factoryToEvent.put(factoryClass, eventClass);
 
-        RegisteredEvent event = new RegisteredEvent(this, eventClass, factoryClass);
-        registeredEvents.put(eventClass, event);
+        RegisteredEvent event = getRegisteredEvent(eventClass);
+        event.bindFactory(factoryClass);
 
-        return event.getRootInvoker();
+        //noinspection unchecked
+        return (T) event.getRootFactory();
     }
 
-    @Nullable
-    private RegisteredEvent getRegisteredEvent(Class<?> clazz) {
-        RegisteredEvent registeredEvent = registeredEvents.get(clazz);
-        if (registeredEvent == null) {
-            Class<?> eventClass = invokerToEvent.get(clazz);
-            if (eventClass != null) {
-                registeredEvent = registeredEvents.get(eventClass);
-            }
-        }
-
-        return registeredEvent;
+    private RegisteredEvent getRegisteredEvent(Class<? extends Event> clazz) {
+        return registeredEvents.computeIfAbsent(clazz, e -> new RegisteredEvent(this, clazz));
     }
 
     @Override
@@ -140,11 +127,11 @@ public class EventBusImpl implements EventBus {
     }
 
     @Override
-    public <T extends EventInvoker> void registerListener(Class<T> invoker, T lambda) {
-        RegisteredEvent event = getRegisteredEvent(invoker);
-        if (event == null) throw new IllegalArgumentException(String.format("No event with listener '%s' is registered.", invoker.getName()));
+    public <T extends EventListener<?>> void registerListener(Class<T> listener, T lambda) {
+        RegisteredEvent event = getRegisteredEvent(RegisteredEvent.getEventForListener(listener));
+        if (event == null) throw new IllegalArgumentException(String.format("No event with listener '%s' is registered.", listener.getName()));
 
-        event.registerListener(lambda);
+        event.registerListener(listener, lambda);
     }
 
     @Override
@@ -153,5 +140,16 @@ public class EventBusImpl implements EventBus {
         if (event == null) throw new IllegalArgumentException(String.format("No event with class '%s' is registered.", eventClass.getName()));
 
         event.registerEventConsumer(cons);
+    }
+
+    private void checkNotAlreadyRegistered(Class<? extends EventFactory<?>> factoryClass, Class<? extends Event> eventClass) {
+        Class<? extends Event> registeredEvent = factoryToEvent.get(factoryClass);
+        if (registeredEvent != null) {
+            throw new IllegalArgumentException(String.format("Event factory '%s' is already registered for event '%s'.", factoryClass.getName(), registeredEvent.getName()));
+        }
+        Class<? extends EventFactory<?>> registeredFactory = eventToFactory.get(eventClass);
+        if (registeredFactory != null) {
+            throw new IllegalArgumentException(String.format("Event class '%s' is already registered with factory '%s'.", eventClass.getName(), registeredFactory.getName()));
+        }
     }
 }

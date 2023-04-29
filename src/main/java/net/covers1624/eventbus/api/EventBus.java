@@ -10,14 +10,14 @@ public interface EventBus {
     /**
      * Register an event to the {@link EventBus}.
      * <p>
-     * The provided {@link EventInvoker} class must be unique for a given {@link Event} class,
+     * The provided {@link EventFactory} class must be unique for a given {@link Event} class,
      * these 2 combined help create a Bi-Directional map for Lambda based listeners.
      *
      * @param factoryClass The Factory class to fire the event.
      * @param eventClass   The event class interface.
      * @return A constructed Factory, capable of firing events for the given event class.
      */
-    <T extends EventInvoker> T registerEvent(Class<T> factoryClass, Class<? extends Event> eventClass);
+    <T extends EventFactory<T>> T registerEvent(Class<T> factoryClass, Class<? extends Event> eventClass);
 
     /**
      * Registers the given object to the {@link EventBus}.
@@ -37,7 +37,7 @@ public interface EventBus {
      * @param invoker The Factory class associated with the event.
      * @param lambda  The Lambda or Method reference.
      */
-    <T extends EventInvoker> void registerListener(Class<T> invoker, T lambda);
+    <T extends EventListener<?>> void registerListener(Class<T> invoker, T lambda);
 
     <T extends Event> void registerListener(Class<T> factory, Consumer<T> event);
 

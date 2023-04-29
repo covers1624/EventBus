@@ -15,20 +15,22 @@ public class TestClass {
     }
 
     public static final EventBus BUS = new EventBusImpl(MockEnvironment.WITH_CLASSES);
-    public static final SomeEvent.Invoker INVOKER = BUS.registerEvent(SomeEvent.Invoker.class, SomeEvent.class);
 
     @Test
     public void doTest() {
-        Class<?> CLASS = SomeEvent.class; // HACK
-        BUS.registerListener(SomeEvent.Invoker.class, (str, i, d) -> {
+        System.out.println();
+        BUS.registerListener(SomeEvent.ListenerV2.class, (str, i, d) -> {
             System.out.println(str + " " + i + " " + d);
         });
-//        BUS.registerListener(SomeEvent.class, e -> {
-//            System.out.println(e);
-//        });
+        BUS.registerListener(SomeEvent.Listener.class, (str, d) -> {
+            System.out.println(str + " " + " " + d);
+        });
+        BUS.registerListener(SomeEvent.class, e -> {
+            System.out.println(e);
+        });
         BUS.register(this);
 
-        INVOKER.fire("A", 1, 33.2);
+        SomeEvent.FACTORY.fire("A", 1, 33.2);
     }
 
     @SubscribeEvent (SomeEvent.class)
@@ -36,8 +38,9 @@ public class TestClass {
         System.out.println(string);
     }
 
-
     public interface SomeEvent extends Event {
+
+        Factory FACTORY = BUS.registerEvent(Factory.class, SomeEvent.class);
 
         String getString();
 
@@ -47,7 +50,23 @@ public class TestClass {
 
         void setInt(int i);
 
-        interface Invoker extends EventInvoker {
+        abstract class Factory extends EventFactory<Factory> {
+
+            // @Deprecated, use bellow, blah
+            public void fire(@Named ("string") String string, @Named ("double") double d) {
+                fire(string, 1, d);
+            }
+
+            public abstract void fire(@Named ("string") String string, @Named ("int") int i, @Named ("double") double d);
+        }
+
+        // @Deprecated, use bellow, blah
+        interface Listener extends EventListener<SomeEvent> {
+
+            void fire(@Named ("string") String string, @Named ("double") double d);
+        }
+
+        interface ListenerV2 extends EventListener<SomeEvent> {
 
             void fire(@Named ("string") String string, @Named ("int") int i, @Named ("double") double d);
         }

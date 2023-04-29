@@ -12,6 +12,7 @@ import java.lang.reflect.Modifier;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
+import java.util.concurrent.atomic.AtomicInteger;
 
 /**
  * Created by covers1624 on 17/9/22.
@@ -26,20 +27,20 @@ public class Utils {
         return name.replace(".", "/");
     }
 
-    public static Type getObjectType(String name) {
-        return Type.getObjectType(name.replace('.', '/'));
+    public static String simpleName(Class<?> clazz) {
+        String str = clazz.getName();
+        int lastDot = str.lastIndexOf('.');
+        return lastDot != -1 ? str.substring(lastDot + 1) : str;
     }
 
-    public static Method getSingleMethod(Class<?> clazz) {
-        assert clazz.isInterface();
+    public static Type synClassName(Class<?> base, String desc, Class<?> extension, AtomicInteger counter) {
+        return Type.getObjectType(asmName(base) + "$$" + desc + "$$" + simpleName(extension) + "$$" + counter.getAndIncrement());
+    }
 
+    public static Method getSingleAbstractMethod(Class<?> clazz) {
         return StreamableIterable.of(clazz.getMethods())
-                .filter(e -> (e.getModifiers() == (Modifier.PUBLIC | Modifier.ABSTRACT)))
+                .filter(e -> (e.getModifiers() & Modifier.ABSTRACT) != 0)
                 .only();
-    }
-
-    public static Constructor<?> singleConstructor(Class<?> clazz) {
-        return clazz.getConstructors()[0];
     }
 
     public static void debugWriteClass(String cName, byte[] bytes) {
