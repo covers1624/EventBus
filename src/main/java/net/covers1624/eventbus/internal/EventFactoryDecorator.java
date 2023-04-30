@@ -30,21 +30,28 @@ public class EventFactoryDecorator {
     private static final Type OBJECT_TYPE = Type.getType(Object.class);
 
     /**
-     * Generates an ASM Decorated class of {@link EventListenerList} implementing the provided invoker interface. The goal of this
-     * is to have a super-fast bridge between the generated event list invoker, the root invoker and the caller.
+     * Generates an implementation of the user provided {@link EventFactory} with {@link EventFactoryInternal} stapled on top.
+     * <p>
+     * The goal of this is to have a fast bridge between the generated event list and the root factory.
+     *
      * <pre>
      * We do the following:
-     * - Generate a synthetic class extending {@link EventListenerList} implementing the invoker interface.
-     * - Generate a passthrough constructor.
-     * - Generate a synthetic field to store the generated event list invoker instance called {@code invoker}.
-     * - Implement a protected getter and setter for accessing the invoker field. Used by {@link EventListenerList} internally.
-     * - Implement the only method provided on the invoker class, forwarding the call to the {@code invoker} instance.
+     * - Generate a synthetic class extending user specified {@link EventFactory} class, implementing {@link EventFactoryInternal}.
+     * - Generate a constructor taking the {@link RegisteredEvent} instance.
+     * - Generate a synthetic field to store the generated factory instance.
+     * - Generate a synthetic field to mark the factory as dirty.
+     * - Generate an implementation of {@link EventFactoryInternal#setDirty()} and {@link EventFactoryInternal#isDirty()} which
+     *   set and check the dirty flag respectively.
+     * - Generate an implementation of {@link EventFactoryInternal#setFactory} which sets the internal factory field
+     *   as well as clearing the dirty flag.
+     * - An implementation of the provided {@link EventFactory}'s sole abstract method which:
+     *   - Checks the dirty flag
+     *   - If the dirty flag is set, regenerates the event factory.
+     *   - Forwards through to the factory field's sole abstract method.
      * </pre>
-     * <p>
-     * Control for generating the listener list invoker is handed off to {@link EventListenerList} to facilitate parallel dispatch of events, and potentially
-     * parallel computation of the generated listener invoker.
      *
-     * @return The newly constructed {@link EventListenerList} class.
+     * @param event The event we are generating a {@link EventFactory} for.
+     * @return The generated event factory.
      */
     // TODO cache these?
     public static EventFactory<?> generate(RegisteredEvent event) {
