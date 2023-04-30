@@ -79,6 +79,9 @@ public class EventFactoryDecorator {
             gen.loadParam(0);
             gen.typeInsn(CHECKCAST, factoryType);
             gen.putField(factoryField);
+            gen.loadThis();
+            gen.ldcInt(0);
+            gen.putField(dirtyField);
             gen.ret();
         });
 
