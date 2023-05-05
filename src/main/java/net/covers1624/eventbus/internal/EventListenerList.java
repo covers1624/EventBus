@@ -6,6 +6,7 @@ import net.covers1624.eventbus.api.EventListener;
 import net.covers1624.eventbus.util.EventField;
 import net.covers1624.eventbus.util.EventFieldExtractor;
 import net.covers1624.eventbus.util.Utils;
+import net.covers1624.quack.collection.FastStream;
 import org.jetbrains.annotations.Nullable;
 
 import java.lang.reflect.Method;
@@ -27,10 +28,10 @@ public class EventListenerList {
     final EventBusImpl bus;
     public final Class<? extends Event> eventInterface;
     public final Map<String, EventField> fields;
-
     @Nullable
-    private Class<? extends EventFactory> eventFactory;
-    private EventFactoryInternal rootFactory;
+    public final Class<? extends EventFactory> eventFactory;
+    @Nullable
+    private final EventFactoryInternal rootFactory;
 
     final List<ListenerHandle> listeners = new LinkedList<>();
 
@@ -41,11 +42,12 @@ public class EventListenerList {
         this.bus = bus;
         this.eventInterface = eventInterface;
         fields = EventFieldExtractor.getEventFields(eventInterface);
-    }
-
-    void bindFactory(Class<? extends EventFactory> eventFactory) {
-        this.eventFactory = eventFactory;
-        rootFactory = (EventFactoryInternal) EventFactoryDecorator.generate(this);
+        eventFactory = getEnclosedFactory(eventInterface);
+        if (eventFactory != null) {
+            rootFactory = (EventFactoryInternal) EventFactoryDecorator.generate(this);
+        } else {
+            rootFactory = null;
+        }
     }
 
     EventFactory getRootFactory() {
@@ -58,10 +60,6 @@ public class EventListenerList {
 
             rootFactory.setFactory(EventListenerGenerator.generateEventFactory(this));
         }
-    }
-
-    public Class<? extends EventFactory> getEventFactory() {
-        return Objects.requireNonNull(eventFactory, "Factory has not been bound yet?");
     }
 
     public void registerMethod(@Nullable Object obj, Method method, List<String> params) {
@@ -104,5 +102,19 @@ public class EventListenerList {
 
         //noinspection unchecked
         return (Class<? extends Event>) ((ParameterizedType) genericInterfaces[0]).getActualTypeArguments()[0];
+    }
+
+    @Nullable
+    public static Class<? extends EventFactory> getEnclosedFactory(Class<? extends Event> eventClazz) {
+        List<Class<?>> factories = FastStream.of(eventClazz.getClasses())
+                .filter(EventFactory.class::isAssignableFrom)
+                .toList();
+        if (factories.isEmpty()) {
+            return null;
+        } else if (factories.size() > 1) {
+            throw new IllegalArgumentException("Found more than one EventFactory class inside event " + eventClazz.getName() + " found: " + factories);
+        }
+        //noinspection unchecked
+        return (Class<? extends EventFactory>) factories.get(0);
     }
 }

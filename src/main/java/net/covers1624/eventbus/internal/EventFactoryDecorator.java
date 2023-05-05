@@ -55,7 +55,7 @@ public class EventFactoryDecorator {
      */
     // TODO cache these?
     public static EventFactory generate(EventListenerList event) {
-        Class<?> factory = event.getEventFactory();
+        Class<?> factory = event.eventFactory;
         Type factoryType = Type.getType(factory);
         Method forwardMethod = getSingleAbstractMethod(factory);
 

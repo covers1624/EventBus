@@ -32,7 +32,7 @@ public class EventListenerGenerator {
     private static final EventClassGenerator EVENT_CLASS_GENERATOR = new EventClassGenerator();
 
     public static Object generateEventFactory(EventListenerList event) {
-        Class<?> eventFactory = event.getEventFactory();
+        Class<?> eventFactory = event.eventFactory;
         Method factoryMethod = Utils.getSingleAbstractMethod(eventFactory);
         List<String> factoryParams = event.bus.paramLookup.findParameterNames(factoryMethod);
 
