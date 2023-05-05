@@ -54,7 +54,7 @@ public class EventFactoryDecorator {
      * @return The generated event factory.
      */
     // TODO cache these?
-    public static EventFactory<?> generate(EventListenerList event) {
+    public static EventFactory generate(EventListenerList event) {
         Class<?> factory = event.getEventFactory();
         Type factoryType = Type.getType(factory);
         Method forwardMethod = getSingleAbstractMethod(factory);
@@ -137,7 +137,7 @@ public class EventFactoryDecorator {
 
         Class<?> c = event.bus.environment.getClassDefiner().defineClass(cName.replace("/", "."), bytes);
         try {
-            return (EventFactory<?>) c.getConstructor(EventListenerList.class).newInstance(event);
+            return (EventFactory) c.getConstructor(EventListenerList.class).newInstance(event);
         } catch (NoSuchMethodException | InstantiationException | IllegalAccessException | InvocationTargetException e) {
             throw new RuntimeException(e);
         }

@@ -17,7 +17,7 @@ public interface EventBus {
      * @param eventClass   The event class interface.
      * @return A constructed Factory, capable of firing events for the given event class.
      */
-    <T extends EventFactory<T>> T constructFactory(Class<T> factoryClass, Class<? extends Event> eventClass);
+    <T extends EventFactory> T constructFactory(Class<T> factoryClass, Class<? extends Event> eventClass);
 
     /**
      * Registers the given object to the {@link EventBus}.

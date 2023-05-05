@@ -29,7 +29,7 @@ public class EventListenerList {
     public final Map<String, EventField> fields;
 
     @Nullable
-    private Class<? extends EventFactory<?>> eventFactory;
+    private Class<? extends EventFactory> eventFactory;
     private EventFactoryInternal rootFactory;
 
     final List<ListenerHandle> listeners = new LinkedList<>();
@@ -43,13 +43,13 @@ public class EventListenerList {
         fields = EventFieldExtractor.getEventFields(eventInterface);
     }
 
-    void bindFactory(Class<? extends EventFactory<?>> eventFactory) {
+    void bindFactory(Class<? extends EventFactory> eventFactory) {
         this.eventFactory = eventFactory;
         rootFactory = (EventFactoryInternal) EventFactoryDecorator.generate(this);
     }
 
-    EventFactory<?> getRootFactory() {
-        return (EventFactory<?>) rootFactory;
+    EventFactory getRootFactory() {
+        return (EventFactory) rootFactory;
     }
 
     public void rebuildEventList() {
@@ -60,7 +60,7 @@ public class EventListenerList {
         }
     }
 
-    public Class<? extends EventFactory<?>> getEventFactory() {
+    public Class<? extends EventFactory> getEventFactory() {
         return Objects.requireNonNull(eventFactory, "Factory has not been bound yet?");
     }
 

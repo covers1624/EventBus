@@ -55,7 +55,7 @@ public class TestClass {
 
         void setInt(int i);
 
-        abstract class Factory extends EventFactory<Factory> {
+        abstract class Factory extends EventFactory {
 
             // @Deprecated, use bellow, blah
             public void fire(@Named ("string") String string, @Named ("double") double d) {

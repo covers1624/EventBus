@@ -27,8 +27,8 @@ public class EventBusImpl implements EventBus {
     final Environment environment;
     final MethodParamLookup paramLookup;
 
-    private final BiMap<Class<? extends EventFactory<?>>, Class<? extends Event>> factoryToEvent = Maps.synchronizedBiMap(HashBiMap.create());
-    private final BiMap<Class<? extends Event>, Class<? extends EventFactory<?>>> eventToFactory = factoryToEvent.inverse();
+    private final BiMap<Class<? extends EventFactory>, Class<? extends Event>> factoryToEvent = Maps.synchronizedBiMap(HashBiMap.create());
+    private final BiMap<Class<? extends Event>, Class<? extends EventFactory>> eventToFactory = factoryToEvent.inverse();
 
     private final Map<Class<? extends Event>, EventListenerList> eventLists = new ConcurrentHashMap<>();
 
@@ -38,7 +38,7 @@ public class EventBusImpl implements EventBus {
     }
 
     @Override
-    public <T extends EventFactory<T>> T constructFactory(Class<T> factoryClass, Class<? extends Event> eventClass) {
+    public <T extends EventFactory> T constructFactory(Class<T> factoryClass, Class<? extends Event> eventClass) {
         if (eventClass.equals(factoryToEvent.get(factoryClass)) && factoryClass.equals(eventToFactory.get(eventClass))) {
             // We have already made a factory for this event, just return it again.
             //noinspection unchecked
@@ -141,12 +141,12 @@ public class EventBusImpl implements EventBus {
         list.registerEventConsumer(cons);
     }
 
-    private void checkNotAlreadyRegistered(Class<? extends EventFactory<?>> factoryClass, Class<? extends Event> eventClass) {
+    private void checkNotAlreadyRegistered(Class<? extends EventFactory> factoryClass, Class<? extends Event> eventClass) {
         Class<? extends Event> registeredEvent = factoryToEvent.get(factoryClass);
         if (registeredEvent != null) {
             throw new IllegalArgumentException(String.format("Event factory '%s' is already registered for event '%s'.", factoryClass.getName(), registeredEvent.getName()));
         }
-        Class<? extends EventFactory<?>> registeredFactory = eventToFactory.get(eventClass);
+        Class<? extends EventFactory> registeredFactory = eventToFactory.get(eventClass);
         if (registeredFactory != null) {
             throw new IllegalArgumentException(String.format("Event class '%s' is already registered with factory '%s'.", eventClass.getName(), registeredFactory.getName()));
         }
