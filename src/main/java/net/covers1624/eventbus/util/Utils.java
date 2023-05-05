@@ -1,6 +1,6 @@
 package net.covers1624.eventbus.util;
 
-import net.covers1624.quack.collection.StreamableIterable;
+import net.covers1624.quack.collection.FastStream;
 import net.covers1624.quack.io.IOUtils;
 import org.objectweb.asm.Type;
 
@@ -37,7 +37,7 @@ public class Utils {
     }
 
     public static Method getSingleAbstractMethod(Class<?> clazz) {
-        return StreamableIterable.of(clazz.getMethods())
+        return FastStream.of(clazz.getMethods())
                 .filter(e -> (e.getModifiers() & Modifier.ABSTRACT) != 0)
                 .only();
     }

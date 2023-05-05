@@ -3,7 +3,7 @@ package net.covers1624.eventbus.util;
 import net.covers1624.eventbus.api.Environment;
 import net.covers1624.eventbus.api.Event;
 import net.covers1624.eventbus.util.ClassGenerator.GeneratedField;
-import net.covers1624.quack.collection.StreamableIterable;
+import net.covers1624.quack.collection.FastStream;
 import org.objectweb.asm.Type;
 
 import java.util.ArrayList;
@@ -66,7 +66,7 @@ public class EventClassGenerator {
         }
 
         // Constructor with all fields as parameters.
-        Type[] ctorArgs = StreamableIterable.of(fields.values()).map(EventField::getType).toArray(new Type[0]);
+        Type[] ctorArgs = FastStream.of(fields.values()).map(EventField::getType).toArray(new Type[0]);
         classGen.addMethod(ACC_PUBLIC, "<init>", Type.getMethodType(VOID_TYPE, ctorArgs), gen -> {
             gen.loadThis();
             gen.methodInsn(INVOKESPECIAL, OBJECT_TYPE, "<init>", Type.getMethodType(VOID_TYPE), false);

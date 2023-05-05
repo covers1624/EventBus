@@ -6,7 +6,7 @@ import net.covers1624.eventbus.util.*;
 import net.covers1624.eventbus.util.ClassGenerator.GeneratedField;
 import net.covers1624.eventbus.util.ClassGenerator.InsnGenerator.Var;
 import net.covers1624.quack.collection.ColUtils;
-import net.covers1624.quack.collection.StreamableIterable;
+import net.covers1624.quack.collection.FastStream;
 import org.objectweb.asm.Type;
 
 import java.lang.reflect.Constructor;
@@ -69,7 +69,7 @@ public class EventListenerGenerator {
             if (requiresEventClass) {
                 Class<? extends Event> eventClass = EVENT_CLASS_GENERATOR.createEventClass(event.bus.environment, event.eventInterface);
                 Constructor<?> ctor = eventClass.getConstructors()[0];
-                Map<String, Method> methods = StreamableIterable.of(eventClass.getDeclaredMethods())
+                Map<String, Method> methods = FastStream.of(eventClass.getDeclaredMethods())
                         .toImmutableMap(Method::getName, e -> e);
 
                 for (EventField value : eventFields.values()) {
@@ -117,7 +117,7 @@ public class EventListenerGenerator {
             gen.ret();
         });
 
-        Type[] ctorArgs = StreamableIterable.of(instanceFields.values())
+        Type[] ctorArgs = FastStream.of(instanceFields.values())
                 .map(e -> e.desc)
                 .toArray(new Type[0]);
         classGen.addMethod(ACC_PUBLIC, "<init>", Type.getMethodType(Type.VOID_TYPE, ctorArgs), gen -> {
@@ -141,7 +141,7 @@ public class EventListenerGenerator {
         Constructor<?> ctor = clazz.getConstructors()[0];
 
         try {
-            return ctor.newInstance(StreamableIterable.of(instanceFields.keySet()).map(e -> e.instance).toArray());
+            return ctor.newInstance(FastStream.of(instanceFields.keySet()).map(e -> e.instance).toArray());
         } catch (InstantiationException | IllegalAccessException | InvocationTargetException e) {
             throw new RuntimeException(e);
         }

@@ -1,6 +1,6 @@
 package net.covers1624.eventbus.util;
 
-import net.covers1624.quack.collection.StreamableIterable;
+import net.covers1624.quack.collection.FastStream;
 import org.jetbrains.annotations.Nullable;
 import org.objectweb.asm.*;
 import org.objectweb.asm.tree.*;
@@ -75,7 +75,7 @@ public class ClassGenerator {
 
     public byte[] build() {
         ClassWriter cw = new ClassWriter(ClassWriter.COMPUTE_MAXS | ClassWriter.COMPUTE_FRAMES);
-        String[] iFaces = StreamableIterable.of(interfaces).map(Type::getInternalName).toArray(new String[0]);
+        String[] iFaces = FastStream.of(interfaces).map(Type::getInternalName).toArray(new String[0]);
         cw.visit(classVersion, access, name.getInternalName(), null, parent.getInternalName(), iFaces);
 
         for (GeneratedField field : fields) {
@@ -340,14 +340,14 @@ public class ClassGenerator {
         }
 
         public void tableSwitch(int min, int max, Label default_, Label... labels) {
-            LabelNode[] labelNodes = StreamableIterable.of(labels)
+            LabelNode[] labelNodes = FastStream.of(labels)
                     .map(this::getLabelNode)
                     .toArray(new LabelNode[0]);
             insns.add(new TableSwitchInsnNode(min, max, getLabelNode(default_), labelNodes));
         }
 
         public void lookupSwitch(Label default_, int[] keys, Label[] labels) {
-            LabelNode[] labelNodes = StreamableIterable.of(labels)
+            LabelNode[] labelNodes = FastStream.of(labels)
                     .map(this::getLabelNode)
                     .toArray(new LabelNode[0]);
             insns.add(new LookupSwitchInsnNode(getLabelNode(default_), keys, labelNodes));
