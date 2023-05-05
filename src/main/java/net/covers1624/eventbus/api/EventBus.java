@@ -39,6 +39,6 @@ public interface EventBus {
      */
     <T extends EventListener<?>> void registerListener(Class<T> invoker, T lambda);
 
-    <T extends Event> void registerListener(Class<T> factory, Consumer<T> event);
+    <T extends Event> void registerListener(Class<T> eventClass, Consumer<T> event);
 
 }

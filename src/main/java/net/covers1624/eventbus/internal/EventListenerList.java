@@ -3,6 +3,7 @@ package net.covers1624.eventbus.internal;
 import net.covers1624.eventbus.api.Event;
 import net.covers1624.eventbus.api.EventFactory;
 import net.covers1624.eventbus.api.EventListener;
+import net.covers1624.eventbus.api.FastInvokeOnly;
 import net.covers1624.eventbus.util.EventField;
 import net.covers1624.eventbus.util.EventFieldExtractor;
 import net.covers1624.eventbus.util.Utils;
@@ -15,7 +16,6 @@ import java.lang.reflect.Type;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
-import java.util.Objects;
 import java.util.function.Consumer;
 
 /**
@@ -28,6 +28,7 @@ public class EventListenerList {
     final EventBusImpl bus;
     public final Class<? extends Event> eventInterface;
     public final Map<String, EventField> fields;
+    public final boolean onlyFastInvoke;
     @Nullable
     public final Class<? extends EventFactory> eventFactory;
     @Nullable
@@ -42,6 +43,8 @@ public class EventListenerList {
         this.bus = bus;
         this.eventInterface = eventInterface;
         fields = EventFieldExtractor.getEventFields(eventInterface);
+        onlyFastInvoke = eventInterface.getAnnotation(FastInvokeOnly.class) != null;
+
         eventFactory = getEnclosedFactory(eventInterface);
         if (eventFactory != null) {
             rootFactory = (EventFactoryInternal) EventFactoryDecorator.generate(this);
@@ -63,29 +66,27 @@ public class EventListenerList {
     }
 
     public void registerMethod(@Nullable Object obj, Method method, List<String> params) {
-        listeners.add(new ListenerHandle(obj, method, params));
-        if (rootFactory != null) {
-            rootFactory.setDirty();
-        }
+        addListener(new ListenerHandle(obj, method, params));
     }
 
-    public void registerMethod(@Nullable Object obj, Method method) {
-        listeners.add(new ListenerHandle(obj, method, null));
-        if (rootFactory != null) {
-            rootFactory.setDirty();
-        }
+    public void registerEventConsumerMethod(@Nullable Object obj, Method method) {
+        addListener(new ListenerHandle(obj, method, null));
     }
 
     public void registerListener(Class<? extends EventListener<?>> listener, Object lambda) {
         Method method = Utils.getSingleAbstractMethod(listener);
-        listeners.add(new ListenerHandle(lambda, method, bus.paramLookup.findParameterNames(method)));
-        if (rootFactory != null) {
-            rootFactory.setDirty();
-        }
+        addListener(new ListenerHandle(lambda, method, bus.paramLookup.findParameterNames(method)));
     }
 
-    public void registerEventConsumer(Consumer<?> cons) {
-        listeners.add(new ListenerHandle(cons, CONS_METHOD, null));
+    public void registerEventConsumerListener(Consumer<?> cons) {
+        addListener(new ListenerHandle(cons, CONS_METHOD, null));
+    }
+
+    private void addListener(ListenerHandle handle) {
+        if (onlyFastInvoke && !handle.isFastInvoke()) {
+            throw new UnsupportedOperationException("Event " + eventInterface.getName() + " is marked as FastInvokeOnly. Must register a lambda or exploded method.");
+        }
+        listeners.add(handle);
         if (rootFactory != null) {
             rootFactory.setDirty();
         }

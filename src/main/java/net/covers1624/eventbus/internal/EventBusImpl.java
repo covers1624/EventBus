@@ -88,7 +88,7 @@ public class EventBusImpl implements EventBus {
 
             LOGGER.info(" Registered event class listener {} for {}.", method, paramEvent.getName());
             getListenerList(paramEvent)
-                    .registerMethod(object, method);
+                    .registerEventConsumerMethod(object, method);
         } else if (annotationEvent != null) {
             List<String> params = paramLookup.findParameterNames(method);
             if (params.size() != args.length) {
@@ -126,6 +126,6 @@ public class EventBusImpl implements EventBus {
         if (list == null) throw new IllegalArgumentException(String.format("No event with class '%s' is registered.", eventClass.getName()));
 
         LOGGER.info("Registered event class lambda event listener for {}.", list.eventInterface.getName());
-        list.registerEventConsumer(cons);
+        list.registerEventConsumerListener(cons);
     }
 }
