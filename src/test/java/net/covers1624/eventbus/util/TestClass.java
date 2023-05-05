@@ -30,7 +30,7 @@ public class TestClass {
         });
         BUS.register(this);
 
-        SomeEvent.FACTORY.fire("A", 1, 33.2);
+        BUS.constructFactory(SomeEvent.Factory.class, SomeEvent.class).fire("A", 1, 33.2);
     }
 
     @SubscribeEvent (SomeEvent.class)
@@ -38,9 +38,14 @@ public class TestClass {
         System.out.println(string);
     }
 
+    @SubscribeEvent
+    public void onSomeEventClass(SomeEvent event) {
+        System.out.println(event.getString());
+    }
+
     public interface SomeEvent extends Event {
 
-        Factory FACTORY = BUS.registerEvent(Factory.class, SomeEvent.class);
+//        Factory FACTORY = BUS.constructFactory(Factory.class, SomeEvent.class);
 
         String getString();
 

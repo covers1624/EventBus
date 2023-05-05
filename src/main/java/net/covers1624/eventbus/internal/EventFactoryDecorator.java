@@ -24,8 +24,8 @@ public class EventFactoryDecorator {
 
     private static final AtomicInteger COUNTER = new AtomicInteger();
 
-    private static final Type REGISTERED_EVENT = Type.getType(RegisteredEvent.class);
-    private static final Method M_REBUILD = SneakyUtils.sneaky(() -> RegisteredEvent.class.getDeclaredMethod("rebuildEventList"));
+    private static final Type REGISTERED_EVENT = Type.getType(EventListenerList.class);
+    private static final Method M_REBUILD = SneakyUtils.sneaky(() -> EventListenerList.class.getDeclaredMethod("rebuildEventList"));
 
     private static final Type OBJECT_TYPE = Type.getType(Object.class);
 
@@ -37,7 +37,7 @@ public class EventFactoryDecorator {
      * <pre>
      * We do the following:
      * - Generate a synthetic class extending user specified {@link EventFactory} class, implementing {@link EventFactoryInternal}.
-     * - Generate a constructor taking the {@link RegisteredEvent} instance.
+     * - Generate a constructor taking the {@link EventListenerList} instance.
      * - Generate a synthetic field to store the generated factory instance.
      * - Generate a synthetic field to mark the factory as dirty.
      * - Generate an implementation of {@link EventFactoryInternal#setDirty()} and {@link EventFactoryInternal#isDirty()} which
@@ -54,7 +54,7 @@ public class EventFactoryDecorator {
      * @return The generated event factory.
      */
     // TODO cache these?
-    public static EventFactory<?> generate(RegisteredEvent event) {
+    public static EventFactory<?> generate(EventListenerList event) {
         Class<?> factory = event.getEventFactory();
         Type factoryType = Type.getType(factory);
         Method forwardMethod = getSingleAbstractMethod(factory);
@@ -137,7 +137,7 @@ public class EventFactoryDecorator {
 
         Class<?> c = event.bus.environment.getClassDefiner().defineClass(cName.replace("/", "."), bytes);
         try {
-            return (EventFactory<?>) c.getConstructor(RegisteredEvent.class).newInstance(event);
+            return (EventFactory<?>) c.getConstructor(EventListenerList.class).newInstance(event);
         } catch (NoSuchMethodException | InstantiationException | IllegalAccessException | InvocationTargetException e) {
             throw new RuntimeException(e);
         }

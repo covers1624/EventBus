@@ -30,8 +30,7 @@ public class EventBusImpl implements EventBus {
     private final BiMap<Class<? extends EventFactory<?>>, Class<? extends Event>> factoryToEvent = Maps.synchronizedBiMap(HashBiMap.create());
     private final BiMap<Class<? extends Event>, Class<? extends EventFactory<?>>> eventToFactory = factoryToEvent.inverse();
 
-    private final Map<Class<? extends Event>, RegisteredEvent> registeredEvents = new ConcurrentHashMap<>();
-    private final Map<Class<? extends EventListener<?>>, RegisteredEvent> eventsByListener = new ConcurrentHashMap<>();
+    private final Map<Class<? extends Event>, EventListenerList> eventLists = new ConcurrentHashMap<>();
 
     public EventBusImpl(Environment environment) {
         this.environment = environment;
@@ -39,19 +38,19 @@ public class EventBusImpl implements EventBus {
     }
 
     @Override
-    public <T extends EventFactory<T>> T registerEvent(Class<T> factoryClass, Class<? extends Event> eventClass) {
+    public <T extends EventFactory<T>> T constructFactory(Class<T> factoryClass, Class<? extends Event> eventClass) {
         checkNotAlreadyRegistered(factoryClass, eventClass);
         factoryToEvent.put(factoryClass, eventClass);
 
-        RegisteredEvent event = getRegisteredEvent(eventClass);
+        EventListenerList event = getListenerList(eventClass);
         event.bindFactory(factoryClass);
 
         //noinspection unchecked
         return (T) event.getRootFactory();
     }
 
-    private RegisteredEvent getRegisteredEvent(Class<? extends Event> clazz) {
-        return registeredEvents.computeIfAbsent(clazz, e -> new RegisteredEvent(this, clazz));
+    private EventListenerList getListenerList(Class<? extends Event> clazz) {
+        return eventLists.computeIfAbsent(clazz, e -> new EventListenerList(this, clazz));
     }
 
     @Override
@@ -64,10 +63,10 @@ public class EventBusImpl implements EventBus {
             methodFilter |= Modifier.STATIC;
         }
 
-        for (Method method : clazz.getMethods()) {
+        for (Method method : clazz.getDeclaredMethods()) {
             LOGGER.info("Considering method {} for event subscription.", method);
             if (method.getModifiers() != methodFilter) {
-                LOGGER.info("Method not applicable, invalid flags. ");
+                LOGGER.debug("Method not applicable, invalid flags. ");
                 continue;
             }
             tryRegisterMethod(object, method);
@@ -77,7 +76,7 @@ public class EventBusImpl implements EventBus {
     private void tryRegisterMethod(Object object, Method method) {
         SubscribeEvent sub = method.getDeclaredAnnotation(SubscribeEvent.class);
         if (sub == null) {
-            LOGGER.info("Method does not have SubscribeEvent annotation.");
+            LOGGER.debug("Method does not have SubscribeEvent annotation.");
             return;
         }
         Class<? extends Event>[] events = sub.value();
@@ -94,52 +93,47 @@ public class EventBusImpl implements EventBus {
                 return;
             }
 
-            LOGGER.info("Detected event from method parameters: {}.", paramEvent);
-            RegisteredEvent registeredEvent = registeredEvents.get(paramEvent);
-            if (registeredEvent == null) {
-                LOGGER.info("Event {} is not known by this event bus.", paramEvent);
-                return;
-            }
-            registeredEvent.registerMethod(object, method);
+            LOGGER.info(" Registered event class listener {} for {}.", method, paramEvent.getName());
+            getListenerList(paramEvent)
+                    .registerMethod(object, method);
         } else if (annotationEvent != null) {
             List<String> params = paramLookup.findParameterNames(method);
             if (params.size() != args.length) {
                 LOGGER.error("Unable to extract all method param names. " + method);
                 return;
             }
-            RegisteredEvent registeredEvent = registeredEvents.get(annotationEvent);
-            if (registeredEvent == null) {
-                LOGGER.info("Event {} is not known by this event bus.", paramEvent);
-                return;
-            }
 
+            EventListenerList eventList = getListenerList(annotationEvent);
             for (int i = 0; i < params.size(); i++) {
                 String param = params.get(i);
-                if (!registeredEvent.fields.containsKey(param)) {
+                if (!eventList.fields.containsKey(param)) {
                     LOGGER.info("Method parameter not an event field. Param: '{}', Index: {}, Method: {}", param, i, method);
                     return;
                 }
             }
-            registeredEvent.registerMethod(object, method, params);
+            LOGGER.info(" Registered fast invoke event listener {} for {}.", method, annotationEvent.getName());
+            eventList.registerMethod(object, method, params);
         } else {
-            LOGGER.info("Unable to determine subscribed event. " + method);
+            LOGGER.debug(" Unable to determine subscribed event. " + method);
         }
     }
 
     @Override
     public <T extends EventListener<?>> void registerListener(Class<T> listener, T lambda) {
-        RegisteredEvent event = getRegisteredEvent(RegisteredEvent.getEventForListener(listener));
-        if (event == null) throw new IllegalArgumentException(String.format("No event with listener '%s' is registered.", listener.getName()));
+        EventListenerList list = getListenerList(EventListenerList.getEventForListener(listener));
+        if (list == null) throw new IllegalArgumentException(String.format("No event with listener '%s' is registered.", listener.getName()));
 
-        event.registerListener(listener, lambda);
+        LOGGER.info("Registered fast invoke lambda event listener for {}.", list.eventInterface.getName());
+        list.registerListener(listener, lambda);
     }
 
     @Override
     public <T extends Event> void registerListener(Class<T> eventClass, Consumer<T> cons) {
-        RegisteredEvent event = getRegisteredEvent(eventClass);
-        if (event == null) throw new IllegalArgumentException(String.format("No event with class '%s' is registered.", eventClass.getName()));
+        EventListenerList list = getListenerList(eventClass);
+        if (list == null) throw new IllegalArgumentException(String.format("No event with class '%s' is registered.", eventClass.getName()));
 
-        event.registerEventConsumer(cons);
+        LOGGER.info("Registered event class lambda event listener for {}.", list.eventInterface.getName());
+        list.registerEventConsumer(cons);
     }
 
     private void checkNotAlreadyRegistered(Class<? extends EventFactory<?>> factoryClass, Class<? extends Event> eventClass) {

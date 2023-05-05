@@ -8,16 +8,16 @@ import java.util.function.Consumer;
 public interface EventBus {
 
     /**
-     * Register an event to the {@link EventBus}.
+     * Construct an {@link EventFactory} instance for firing the given event.
      * <p>
      * The provided {@link EventFactory} class must be unique for a given {@link Event} class,
-     * these 2 combined help create a Bi-Directional map for Lambda based listeners.
+     * they may not be shared between events.
      *
      * @param factoryClass The Factory class to fire the event.
      * @param eventClass   The event class interface.
      * @return A constructed Factory, capable of firing events for the given event class.
      */
-    <T extends EventFactory<T>> T registerEvent(Class<T> factoryClass, Class<? extends Event> eventClass);
+    <T extends EventFactory<T>> T constructFactory(Class<T> factoryClass, Class<? extends Event> eventClass);
 
     /**
      * Registers the given object to the {@link EventBus}.

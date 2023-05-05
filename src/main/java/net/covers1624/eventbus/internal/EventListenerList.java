@@ -20,7 +20,7 @@ import java.util.function.Consumer;
 /**
  * Created by covers1624 on 17/9/22.
  */
-public class RegisteredEvent {
+public class EventListenerList {
 
     private static final Method CONS_METHOD = Utils.getSingleAbstractMethod(Consumer.class);
 
@@ -34,16 +34,13 @@ public class RegisteredEvent {
 
     final List<ListenerHandle> listeners = new LinkedList<>();
 
-    public RegisteredEvent(EventBusImpl bus, Class<? extends Event> eventInterface) {
+    public EventListenerList(EventBusImpl bus, Class<? extends Event> eventInterface) {
         assert eventInterface.isInterface();
         assert Event.class.isAssignableFrom(eventInterface);
 
         this.bus = bus;
         this.eventInterface = eventInterface;
-        this.fields = EventFieldExtractor.getEventFields(eventInterface);
-
-//        invokerMethod = Utils.getSingleMethod(eventFactory);
-//        invokerParams = bus.paramLookup.findParameterNames(invokerMethod);
+        fields = EventFieldExtractor.getEventFields(eventInterface);
     }
 
     void bindFactory(Class<? extends EventFactory<?>> eventFactory) {
@@ -66,10 +63,6 @@ public class RegisteredEvent {
     public Class<? extends EventFactory<?>> getEventFactory() {
         return Objects.requireNonNull(eventFactory, "Factory has not been bound yet?");
     }
-
-    //    public <T> T getRootInvoker() {
-//        return unsafeCast(listenerList);
-//    }
 
     public void registerMethod(@Nullable Object obj, Method method, List<String> params) {
         listeners.add(new ListenerHandle(obj, method, params));
