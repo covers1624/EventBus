@@ -1,14 +1,22 @@
 plugins {
     id 'java'
     id 'java-library'
+    id 'maven-publish'
 }
 
-java.toolchain.languageVersion = JavaLanguageVersion.of(8)
+java {
+    toolchain.languageVersion = JavaLanguageVersion.of(8)
+    withSourcesJar()
+}
 
 group 'org.example'
-version '1.0.0'
+version '0.1.0'
+
+version = "$version." + (System.getenv("BUILD_NUMBER") ?: "1")
+println "Starting build of ${archivesBaseName}, Version: ${version}"
 
 repositories {
+    mavenLocal()
     mavenCentral()
     maven { url 'https://maven.covers1624.net' }
 }
@@ -38,4 +46,55 @@ dependencies {
 
 test {
     useJUnitPlatform()
+}
+
+publishing {
+    repositories {
+        if (System.getenv('MAVEN_PASS')) {
+            maven {
+                url "https://nexus.covers1624.net/repository/maven-releases/"
+                credentials {
+                    username 'covers1624'
+                    password System.getenv('MAVEN_PASS')
+                }
+            }
+        }
+    }
+    publications {
+        publication(MavenPublication) {
+            groupId project.group
+            artifactId project.archivesBaseName
+            version project.version
+            from components.java
+
+            pom {
+                name = archivesBaseName
+                description = archivesBaseName
+                url = "https://github.com/covers1624/${archivesBaseName}"
+                scm {
+                    url = "https://github.com/covers1624/${archivesBaseName}"
+                    connection = "scm:git:git://github.com/covers1624/${archivesBaseName}.git"
+                    connection = "scm:git:git@github.com:covers1624/${archivesBaseName}.git"
+                }
+
+                issueManagement {
+                    system = 'github'
+                    url = "https://github.com/covers1624/${archivesBaseName}/issues"
+                }
+                licenses {
+                    license {
+                        name = 'MIT'
+                        url = "https://raw.githubusercontent.com/covers1624/${archivesBaseName}/master/LICENSE.txt"
+                        distribution = 'repo'
+                    }
+                }
+                developers {
+                    developer {
+                        id = 'covers1624'
+                        name = 'covers1624'
+                    }
+                }
+            }
+        }
+    }
 }
