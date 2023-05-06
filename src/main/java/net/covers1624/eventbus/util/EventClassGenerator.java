@@ -85,6 +85,6 @@ public class EventClassGenerator {
         }
 
         //noinspection unchecked
-        return (Class<? extends Event>) env.getClassDefiner().defineClass(cName.replace("/", "."), bytes);
+        return (Class<? extends Event>) env.defineClass(cName.replace("/", "."), bytes);
     }
 }

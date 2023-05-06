@@ -34,54 +34,11 @@ public interface Environment {
     InputStream getClassStream(Class<?> clazz);
 
     /**
-     * Get the {@link ClassDefiner} responsible for defining new classes
-     * in this environment.
+     * Define the given class.
      *
-     * @return The {@link ClassDefiner}.
+     * @param cName The name of the class.
+     * @param bytes The bytes of the class.
+     * @return The defined class.
      */
-    ClassDefiner getClassDefiner();
-
-    /**
-     * Responsible for defining classes.
-     * <p>
-     * It is expected that this any classes defined by this are
-     * accessible by any other class defined by this.
-     */
-    interface ClassDefiner {
-
-        /**
-         * Define the given class.
-         *
-         * @param cName The name of the class.
-         * @param bytes The bytes of the class.
-         * @return The defined class.
-         */
-        Class<?> defineClass(String cName, byte[] bytes);
-
-        /**
-         * Create a {@link ClassDefiner} which uses a builtin {@link ClassLoader} to define classes.
-         * <p>
-         * Any loads through this {@link ClassLoader} will delegate to the {@link Thread#getContextClassLoader()}.
-         *
-         * @return The {@link ClassDefiner}.
-         */
-        static ClassDefiner internalClassLoader() {
-            AccessibleClassLoader cl = new ThreadContextClassLoader();
-            return cl::defineClass;
-        }
-
-        /**
-         * Create a {@link ClassDefiner} which uses a builtin {@link ClassLoader} to define classes.
-         * <p>
-         * Any loads through this {@link ClassLoader} will delegate to the provided parent.
-         *
-         * @param parent The parent {@link ClassLoader} the new one should delegate to.
-         * @return {@link ClassDefiner}.
-         */
-        static ClassDefiner internalClassLoader(ClassLoader parent) {
-            AccessibleClassLoader cl = new AccessibleClassLoader(parent);
-            return cl::defineClass;
-        }
-    }
-
+    Class<?> defineClass(String cName, byte[] bytes);
 }

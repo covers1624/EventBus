@@ -137,7 +137,7 @@ public class EventListenerGenerator {
         if (Environment.DEBUG) {
             debugWriteClass(cName, bytes);
         }
-        Class<?> clazz = event.bus.environment.getClassDefiner().defineClass(cName.replace("/", "."), bytes);
+        Class<?> clazz = event.bus.environment.defineClass(cName.replace("/", "."), bytes);
         Constructor<?> ctor = clazz.getConstructors()[0];
 
         try {

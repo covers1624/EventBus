@@ -2,7 +2,6 @@ package net.covers1624.eventbus.util;
 
 import net.covers1624.eventbus.api.*;
 import net.covers1624.eventbus.internal.EventBusImpl;
-import net.covers1624.eventbus.util.mock.MockEnvironment;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
 
@@ -15,7 +14,7 @@ public class TestFastInvokeOnly {
         System.setProperty("net.covers1624.eventbus.debug", "true");
     }
 
-    public static final EventBus BUS = new EventBusImpl(MockEnvironment.WITH_CLASSES);
+    public static final EventBus BUS = new EventBusImpl(TestEnvironment.WITH_CLASSES);
 
     @Test
     public void doTest() {

@@ -135,7 +135,7 @@ public class EventFactoryDecorator {
             debugWriteClass(cName, bytes);
         }
 
-        Class<?> c = event.bus.environment.getClassDefiner().defineClass(cName.replace("/", "."), bytes);
+        Class<?> c = event.bus.environment.defineClass(cName.replace("/", "."), bytes);
         try {
             return (EventFactory) c.getConstructor(EventListenerList.class).newInstance(event);
         } catch (NoSuchMethodException | InstantiationException | IllegalAccessException | InvocationTargetException e) {

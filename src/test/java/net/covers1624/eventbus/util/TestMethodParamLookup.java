@@ -1,7 +1,6 @@
 package net.covers1624.eventbus.util;
 
 import net.covers1624.eventbus.api.Named;
-import net.covers1624.eventbus.util.mock.MockEnvironment;
 import org.junit.jupiter.api.Test;
 
 import java.util.List;
@@ -20,7 +19,7 @@ public class TestMethodParamLookup {
     @Test
     public void testMethodsWithoutASM() throws Throwable {
         Class<?> clazz = TestClass.class;
-        MethodParamLookup lookup = new MethodParamLookup(MockEnvironment.WITHOUT_CLASSES);
+        MethodParamLookup lookup = new MethodParamLookup(TestEnvironment.WITHOUT_CLASSES);
 
         List<String> onEventNames = lookup.findParameterNames(clazz.getMethod("onEvent", String.class, String.class, List.class));
         assertEquals(0, onEventNames.size());
@@ -35,7 +34,7 @@ public class TestMethodParamLookup {
     @Test
     public void testMethodsWithASM() throws Throwable {
         Class<?> clazz = TestClass.class;
-        MethodParamLookup lookup = new MethodParamLookup(MockEnvironment.WITH_CLASSES);
+        MethodParamLookup lookup = new MethodParamLookup(TestEnvironment.WITH_CLASSES);
 
         List<String> onEventNames = lookup.findParameterNames(clazz.getMethod("onEvent", String.class, String.class, List.class));
         assertEquals(3, onEventNames.size());
@@ -53,7 +52,7 @@ public class TestMethodParamLookup {
     @Test
     public void testInterfaceWithoutASM() throws Throwable {
         Class<?> clazz = TestInterface.class;
-        MethodParamLookup lookup = new MethodParamLookup(MockEnvironment.WITHOUT_CLASSES);
+        MethodParamLookup lookup = new MethodParamLookup(TestEnvironment.WITHOUT_CLASSES);
 
         List<String> onEventNames = lookup.findParameterNames(clazz.getMethod("fire", String.class, String.class, List.class));
         assertEquals(0, onEventNames.size());
@@ -68,7 +67,7 @@ public class TestMethodParamLookup {
     @Test
     public void testInterfaceWithASM() throws Throwable {
         Class<?> clazz = TestInterface.class;
-        MethodParamLookup lookup = new MethodParamLookup(MockEnvironment.WITH_CLASSES);
+        MethodParamLookup lookup = new MethodParamLookup(TestEnvironment.WITH_CLASSES);
 
         List<String> onEventNames = lookup.findParameterNames(clazz.getMethod("fire", String.class, String.class, List.class));
         assertEquals(0, onEventNames.size());

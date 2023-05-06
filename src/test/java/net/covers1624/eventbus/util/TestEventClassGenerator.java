@@ -1,7 +1,6 @@
 package net.covers1624.eventbus.util;
 
 import net.covers1624.eventbus.api.Event;
-import net.covers1624.eventbus.util.mock.MockEnvironment;
 import org.junit.jupiter.api.Test;
 
 /**
@@ -16,7 +15,7 @@ public class TestEventClassGenerator {
     @Test
     public void doTest() {
         EventClassGenerator generator = new EventClassGenerator();
-        generator.createEventClass(MockEnvironment.WITH_CLASSES, Hierarchy.class);
+        generator.createEventClass(TestEnvironment.WITH_CLASSES, Hierarchy.class);
     }
 
     public interface Hierarchy1 extends Event {
