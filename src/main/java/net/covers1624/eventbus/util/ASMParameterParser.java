@@ -2,10 +2,10 @@ package net.covers1624.eventbus.util;
 
 import com.google.common.collect.ImmutableMap;
 import net.covers1624.eventbus.api.Environment;
-import org.apache.logging.log4j.LogManager;
-import org.apache.logging.log4j.Logger;
 import org.jetbrains.annotations.Nullable;
 import org.objectweb.asm.*;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import java.io.IOException;
 import java.io.InputStream;
@@ -19,7 +19,7 @@ import java.util.Map;
  */
 public class ASMParameterParser {
 
-    private static final Logger LOGGER = LogManager.getLogger();
+    private static final Logger LOGGER = LoggerFactory.getLogger(ASMParameterParser.class);
 
     public static Map<String, List<String>> parseParams(Environment env, Class<?> clazz) {
         try (InputStream is = env.getClassStream(clazz)) {

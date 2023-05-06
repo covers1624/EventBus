@@ -2,8 +2,8 @@ package net.covers1624.eventbus.internal;
 
 import net.covers1624.eventbus.api.*;
 import net.covers1624.eventbus.util.MethodParamLookup;
-import org.apache.logging.log4j.LogManager;
-import org.apache.logging.log4j.Logger;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import java.lang.reflect.Method;
 import java.lang.reflect.Modifier;
@@ -19,7 +19,7 @@ import static net.covers1624.quack.util.SneakyUtils.unsafeCast;
  */
 public class EventBusImpl implements EventBus {
 
-    private static final Logger LOGGER = LogManager.getLogger();
+    private static final Logger LOGGER = LoggerFactory.getLogger(EventBusImpl.class);
 
     final Environment environment;
     final MethodParamLookup paramLookup;
