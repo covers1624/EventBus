@@ -33,6 +33,7 @@ public class EventListenerGenerator {
 
     public static Object generateEventFactory(EventListenerList event) {
         Class<?> eventFactory = event.eventFactory;
+        List<ListenerHandle> listeners = event.getListeners();
         Method factoryMethod = Utils.getSingleAbstractMethod(eventFactory);
         List<String> factoryParams = event.bus.paramLookup.findParameterNames(factoryMethod);
 
@@ -42,12 +43,12 @@ public class EventListenerGenerator {
         );
         classGen.withParent(Type.getType(eventFactory));
 
-        boolean requiresEventClass = ColUtils.anyMatch(event.listeners, e -> !e.isFastInvoke());
+        boolean requiresEventClass = ColUtils.anyMatch(listeners, e -> !e.isFastInvoke());
         Map<String, EventField> eventFields = EventFieldExtractor.getEventFields(event.eventInterface);
 
         AtomicInteger instanceFieldCounter = new AtomicInteger();
         Map<ListenerHandle, GeneratedField> instanceFields = new LinkedHashMap<>();
-        for (ListenerHandle listener : event.listeners) {
+        for (ListenerHandle listener : listeners) {
             if (listener.instance != null) {
                 GeneratedField instanceField = classGen.addField(
                         ACC_PRIVATE | ACC_FINAL,
@@ -86,7 +87,7 @@ public class EventListenerGenerator {
                 gen.store(eventVar);
             }
 
-            for (ListenerHandle listener : event.listeners) {
+            for (ListenerHandle listener : listeners) {
                 if (listener.instance != null) {
                     // Emit load of instance field for handle invoke.
                     gen.loadThis();

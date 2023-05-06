@@ -88,7 +88,7 @@ public class EventBusImpl implements EventBus {
 
             LOGGER.info(" Registered event class listener {} for {}.", method, paramEvent.getName());
             getListenerList(paramEvent)
-                    .registerEventConsumerMethod(object, method);
+                    .registerEventConsumerMethod(object, method, sub.priority());
         } else if (annotationEvent != null) {
             List<String> params = paramLookup.findParameterNames(method);
             if (params.size() != args.length) {
@@ -105,27 +105,27 @@ public class EventBusImpl implements EventBus {
                 }
             }
             LOGGER.info(" Registered fast invoke event listener {} for {}.", method, annotationEvent.getName());
-            eventList.registerMethod(object, method, params);
+            eventList.registerMethod(object, method, sub.priority(), params);
         } else {
             LOGGER.debug(" Unable to determine subscribed event. " + method);
         }
     }
 
     @Override
-    public <T extends EventListener<?>> void registerListener(Class<T> listenerType, T func) {
+    public <T extends EventListener<?>> void registerListener(Class<T> listenerType, EventPriority priority, T func) {
         EventListenerList list = getListenerList(EventListenerList.getEventForListener(listenerType));
         if (list == null) throw new IllegalArgumentException(String.format("No event with listener '%s' is registered.", listenerType.getName()));
 
         LOGGER.info("Registered fast invoke lambda event listener for {}.", list.eventInterface.getName());
-        list.registerListener(listenerType, func);
+        list.registerListener(listenerType, priority, func);
     }
 
     @Override
-    public <T extends Event> void registerListener(Class<T> eventClass, Consumer<T> func) {
+    public <T extends Event> void registerListener(Class<T> eventClass, EventPriority priority, Consumer<T> func) {
         EventListenerList list = getListenerList(eventClass);
         if (list == null) throw new IllegalArgumentException(String.format("No event with class '%s' is registered.", eventClass.getName()));
 
         LOGGER.info("Registered event class lambda event listener for {}.", list.eventInterface.getName());
-        list.registerEventConsumerListener(func);
+        list.registerEventConsumerListener(priority, func);
     }
 }

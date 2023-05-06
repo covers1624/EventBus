@@ -43,6 +43,16 @@ public interface EventBus {
     void register(Object object);
 
     /**
+     * An overload of {@link #registerListener(Class, EventPriority, EventListener)} declaring normal priority.
+     *
+     * @param listenerType The Factory class associated with the event.
+     * @param func         The Lambda or Method reference.
+     */
+    default <T extends EventListener<?>> void registerListener(Class<T> listenerType, T func) {
+        registerListener(listenerType, EventPriority.NORMAL, func);
+    }
+
+    /**
      * Registers a {@link EventListener} for the given event.
      * <p>
      * As opposed to {@link #registerListener(Class, Consumer)}, this method
@@ -50,9 +60,20 @@ public interface EventBus {
      * way to register an event.
      *
      * @param listenerType The Factory class associated with the event.
+     * @param priority     The priority of this listener.
      * @param func         The Lambda or Method reference.
      */
-    <T extends EventListener<?>> void registerListener(Class<T> listenerType, T func);
+    <T extends EventListener<?>> void registerListener(Class<T> listenerType, EventPriority priority, T func);
+
+    /**
+     * An overload of {@link #registerListener(Class, EventPriority, Consumer)} declaring normal priority.
+     *
+     * @param eventClass The {@link Event} class to register for.
+     * @param func       The Lambda or Method reference.
+     */
+    default <T extends Event> void registerListener(Class<T> eventClass, Consumer<T> func) {
+        registerListener(eventClass, EventPriority.NORMAL, func);
+    }
 
     /**
      * Registers a regular {@link Consumer} for the given event.
@@ -61,8 +82,9 @@ public interface EventBus {
      * event fields.
      *
      * @param eventClass The {@link Event} class to register for.
-     * @param func      The Lambda or Method reference.
+     * @param priority   The priority of this listener.
+     * @param func       The Lambda or Method reference.
      */
-    <T extends Event> void registerListener(Class<T> eventClass, Consumer<T> func);
+    <T extends Event> void registerListener(Class<T> eventClass, EventPriority priority, Consumer<T> func);
 
 }
