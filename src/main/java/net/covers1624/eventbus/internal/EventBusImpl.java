@@ -112,20 +112,20 @@ public class EventBusImpl implements EventBus {
     }
 
     @Override
-    public <T extends EventListener<?>> void registerListener(Class<T> listener, T lambda) {
-        EventListenerList list = getListenerList(EventListenerList.getEventForListener(listener));
-        if (list == null) throw new IllegalArgumentException(String.format("No event with listener '%s' is registered.", listener.getName()));
+    public <T extends EventListener<?>> void registerListener(Class<T> listenerType, T func) {
+        EventListenerList list = getListenerList(EventListenerList.getEventForListener(listenerType));
+        if (list == null) throw new IllegalArgumentException(String.format("No event with listener '%s' is registered.", listenerType.getName()));
 
         LOGGER.info("Registered fast invoke lambda event listener for {}.", list.eventInterface.getName());
-        list.registerListener(listener, lambda);
+        list.registerListener(listenerType, func);
     }
 
     @Override
-    public <T extends Event> void registerListener(Class<T> eventClass, Consumer<T> cons) {
+    public <T extends Event> void registerListener(Class<T> eventClass, Consumer<T> func) {
         EventListenerList list = getListenerList(eventClass);
         if (list == null) throw new IllegalArgumentException(String.format("No event with class '%s' is registered.", eventClass.getName()));
 
         LOGGER.info("Registered event class lambda event listener for {}.", list.eventInterface.getName());
-        list.registerEventConsumerListener(cons);
+        list.registerEventConsumerListener(func);
     }
 }

@@ -1,7 +1,5 @@
 package net.covers1624.eventbus.api;
 
-import net.covers1624.eventbus.util.AccessibleClassLoader;
-import net.covers1624.eventbus.util.ThreadContextClassLoader;
 import org.jetbrains.annotations.Nullable;
 
 import java.io.InputStream;

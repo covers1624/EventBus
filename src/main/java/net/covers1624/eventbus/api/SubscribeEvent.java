@@ -7,6 +7,8 @@ import static java.lang.annotation.ElementType.METHOD;
 import static java.lang.annotation.RetentionPolicy.RUNTIME;
 
 /**
+ * Marker annotation for marking methods for {@link EventBus#register}
+ * <p>
  * Created by covers1624 on 22/3/21.
  */
 @Target (METHOD)
