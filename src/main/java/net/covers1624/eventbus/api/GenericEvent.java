@@ -1,5 +1,7 @@
 package net.covers1624.eventbus.api;
 
+import org.jetbrains.annotations.ApiStatus;
+
 import java.lang.reflect.Type;
 
 /**
@@ -7,6 +9,7 @@ import java.lang.reflect.Type;
  * <p>
  * Created by covers1624 on 10/4/21.
  */
+@ApiStatus.Experimental // Not yet implemented.
 public interface GenericEvent<T> extends Event {
 
     Type getGenericType();
