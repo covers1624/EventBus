@@ -2,6 +2,8 @@ package net.covers1624.eventbus.util;
 
 import net.covers1624.quack.collection.FastStream;
 import net.covers1624.quack.io.IOUtils;
+import org.jetbrains.annotations.Contract;
+import org.jetbrains.annotations.Nullable;
 import org.objectweb.asm.Type;
 
 import java.io.IOException;
@@ -51,5 +53,25 @@ public class Utils {
         } catch (IOException e) {
             throw new RuntimeException("TODO", e);
         }
+    }
+
+    @Nullable
+    @Contract ("!null->!null")
+    public static String uncapitalize(@Nullable String s) {
+        if (s == null) return null;
+
+        int len = s.length();
+        if (len == 0) return s;
+
+        char ch = s.charAt(0);
+        char lowerCh = Character.toLowerCase(ch);
+        if (ch == lowerCh) {
+            return s;
+        }
+        if (len == 1) {
+            return String.valueOf(lowerCh);
+        }
+
+        return lowerCh + s.substring(1, len);
     }
 }

@@ -25,7 +25,6 @@ dependencies {
     api 'org.ow2.asm:asm-analysis:9.2'
     api 'com.google.code.gson:gson:2.8.7'
     api 'com.google.guava:guava:30.1.1-jre'
-    api 'org.apache.commons:commons-lang3:3.12.0'
     api 'net.covers1624:Quack:0.4.6.69'
     api 'org.apache.logging.log4j:log4j-api:2.14.1'
 

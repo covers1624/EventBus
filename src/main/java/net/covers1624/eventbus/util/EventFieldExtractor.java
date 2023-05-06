@@ -2,7 +2,6 @@ package net.covers1624.eventbus.util;
 
 import com.google.common.collect.ImmutableMap;
 import net.covers1624.eventbus.api.Event;
-import org.apache.commons.lang3.StringUtils;
 
 import java.lang.reflect.Method;
 import java.lang.reflect.Modifier;
@@ -84,7 +83,7 @@ public class EventFieldExtractor {
             String name = method.getName();
             if (name.startsWith("get") || name.startsWith("is")) {
                 int chop = name.startsWith("is") ? 2 : 3;
-                String fieldName = StringUtils.uncapitalize(name.substring(chop));
+                String fieldName = Utils.uncapitalize(name.substring(chop));
 
                 FieldBuilder builder = found.computeIfAbsent(fieldName, FieldBuilder::new);
                 if (builder.getter != null) {
@@ -94,7 +93,7 @@ public class EventFieldExtractor {
                 builder.setType(method.getReturnType());
                 builder.setGenericType(method.getGenericReturnType());
             } else if (name.startsWith("set")) {
-                String fieldName = StringUtils.uncapitalize(name.substring(3));
+                String fieldName = Utils.uncapitalize(name.substring(3));
 
                 FieldBuilder builder = found.computeIfAbsent(fieldName, FieldBuilder::new);
                 if (builder.setter != null) {
