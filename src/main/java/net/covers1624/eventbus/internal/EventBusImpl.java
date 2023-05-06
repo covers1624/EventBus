@@ -112,7 +112,7 @@ public class EventBusImpl implements EventBus {
     }
 
     @Override
-    public <T extends EventListener<?>> void registerListener(Class<T> listenerType, EventPriority priority, T func) {
+    public <T extends EventListener> void registerListener(Class<T> listenerType, EventPriority priority, T func) {
         EventListenerList list = getListenerList(EventListenerList.getEventForListener(listenerType));
         if (list == null) throw new IllegalArgumentException(String.format("No event with listener '%s' is registered.", listenerType.getName()));
 

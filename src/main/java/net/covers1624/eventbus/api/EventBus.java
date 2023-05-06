@@ -48,7 +48,7 @@ public interface EventBus {
      * @param listenerType The Factory class associated with the event.
      * @param func         The Lambda or Method reference.
      */
-    default <T extends EventListener<?>> void registerListener(Class<T> listenerType, T func) {
+    default <T extends EventListener> void registerListener(Class<T> listenerType, T func) {
         registerListener(listenerType, EventPriority.NORMAL, func);
     }
 
@@ -63,7 +63,7 @@ public interface EventBus {
      * @param priority     The priority of this listener.
      * @param func         The Lambda or Method reference.
      */
-    <T extends EventListener<?>> void registerListener(Class<T> listenerType, EventPriority priority, T func);
+    <T extends EventListener> void registerListener(Class<T> listenerType, EventPriority priority, T func);
 
     /**
      * An overload of {@link #registerListener(Class, EventPriority, Consumer)} declaring normal priority.

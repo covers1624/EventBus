@@ -39,7 +39,7 @@ public class EventPriorityTest {
             public abstract void fire();
         }
 
-        interface Listener extends EventListener<SimpleEvent> {
+        interface Listener extends EventListener {
 
             void fire();
         }

@@ -35,7 +35,7 @@ public class TestFastInvokeOnly {
             public abstract void fire();
         }
 
-        interface Listener extends EventListener<SomeEvent> {
+        interface Listener extends EventListener {
 
             void fire();
         }

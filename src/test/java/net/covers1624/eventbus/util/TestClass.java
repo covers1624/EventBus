@@ -65,12 +65,12 @@ public class TestClass {
         }
 
         // @Deprecated, use bellow, blah
-        interface Listener extends EventListener<SomeEvent> {
+        interface Listener extends EventListener {
 
             void fire(@Named ("string") String string, @Named ("double") double d);
         }
 
-        interface ListenerV2 extends EventListener<SomeEvent> {
+        interface ListenerV2 extends EventListener {
 
             void fire(@Named ("string") String string, @Named ("int") int i, @Named ("double") double d);
         }

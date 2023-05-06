@@ -8,8 +8,6 @@ import net.covers1624.quack.collection.FastStream;
 import org.jetbrains.annotations.Nullable;
 
 import java.lang.reflect.Method;
-import java.lang.reflect.ParameterizedType;
-import java.lang.reflect.Type;
 import java.util.ArrayList;
 import java.util.Comparator;
 import java.util.List;
@@ -79,7 +77,7 @@ public class EventListenerList {
         addListener(new ListenerHandle(obj, method, priority, null));
     }
 
-    public void registerListener(Class<? extends EventListener<?>> listener, EventPriority priority, Object lambda) {
+    public void registerListener(Class<? extends EventListener> listener, EventPriority priority, Object lambda) {
         Method method = Utils.getSingleAbstractMethod(listener);
         addListener(new ListenerHandle(lambda, method, priority, bus.paramLookup.findParameterNames(method)));
     }
@@ -99,17 +97,13 @@ public class EventListenerList {
         }
     }
 
-    public static Class<? extends Event> getEventForListener(Class<? extends EventListener<?>> listener) {
-        Type[] genericInterfaces = listener.getGenericInterfaces();
-        if (genericInterfaces.length != 1) {
-            throw new IllegalStateException("EventListener '" + listener.getName() + "' should only extend EventListener.");
+    public static Class<? extends Event> getEventForListener(Class<? extends EventListener> listener) {
+        Class<?> clazz = listener.getEnclosingClass();
+        if (!Event.class.isAssignableFrom(clazz)) {
+            throw new IllegalArgumentException("EventListener must be enclosed inside its Event class.");
         }
-        if (!(genericInterfaces[0] instanceof ParameterizedType)) {
-            throw new IllegalStateException("EventListener '" + listener.getName() + "' must parameterize EventListener.");
-        }
-
         //noinspection unchecked
-        return (Class<? extends Event>) ((ParameterizedType) genericInterfaces[0]).getActualTypeArguments()[0];
+        return (Class<? extends Event>) clazz;
     }
 
     @Nullable

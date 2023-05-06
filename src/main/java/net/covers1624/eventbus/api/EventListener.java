@@ -16,10 +16,8 @@ package net.covers1624.eventbus.api;
  * <p>
  * Created by covers1624 on 22/3/21.
  *
- * @param <T> The event type, this is parsed via reflection to match an {@link EventListener} to a given {@link Event}.
- *            // TODO don't do this, just use the enclosing class as with EventFactory.
  * @see Event
  * @see EventFactory
  */
-public interface EventListener<T extends Event> {
+public interface EventListener {
 }
