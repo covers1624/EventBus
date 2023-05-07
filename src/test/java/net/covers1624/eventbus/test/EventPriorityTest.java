@@ -2,7 +2,6 @@ package net.covers1624.eventbus.test;
 
 import net.covers1624.eventbus.api.*;
 import net.covers1624.eventbus.internal.EventBusImpl;
-import net.covers1624.eventbus.util.TestEnvironment;
 import org.junit.jupiter.api.Test;
 
 import java.util.concurrent.atomic.AtomicInteger;
@@ -12,9 +11,9 @@ import static org.junit.jupiter.api.Assertions.assertEquals;
 /**
  * Created by covers1624 on 7/5/23.
  */
-public class EventPriorityTest {
+public class EventPriorityTest extends TestBase {
 
-    private static final EventBus BUS = new EventBusImpl(TestEnvironment.WITH_CLASSES);
+    private static final EventBus BUS = new EventBusImpl(WITH_CLASSES);
 
     @Test
     public void doTest() {

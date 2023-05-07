@@ -1,8 +1,10 @@
-package net.covers1624.eventbus.util;
+package net.covers1624.eventbus.test;
 
 import net.covers1624.eventbus.api.CancelableEvent;
 import net.covers1624.eventbus.api.Event;
 import net.covers1624.eventbus.api.GenericEvent;
+import net.covers1624.eventbus.util.EventField;
+import net.covers1624.eventbus.util.EventFieldExtractor;
 import org.junit.jupiter.api.Disabled;
 import org.junit.jupiter.api.Test;
 
@@ -46,7 +48,7 @@ public class TestEventFieldExtractor {
     @Test
     public void testDuplicate() {
         Exception e = assertThrows(IllegalStateException.class, () -> EventFieldExtractor.getEventFields(Duplicate.class));
-        assertEquals("Found duplicate Event field name 'hierarchy1'. Declared in 'net.covers1624.eventbus.util.TestEventFieldExtractor$Hierarchy1' and 'net.covers1624.eventbus.util.TestEventFieldExtractor$DuplicateH1'.", e.getMessage());
+        assertEquals("Found duplicate Event field name 'hierarchy1'. Declared in 'net.covers1624.eventbus.test.TestEventFieldExtractor$Hierarchy1' and 'net.covers1624.eventbus.test.TestEventFieldExtractor$DuplicateH1'.", e.getMessage());
     }
 
     @Test
@@ -58,7 +60,7 @@ public class TestEventFieldExtractor {
     @Test
     public void testNoGetter() {
         Exception e = assertThrows(IllegalStateException.class, () -> EventFieldExtractor.getEventFields(NoGetter.class));
-        assertEquals("Getter for event field 'field' in class 'net.covers1624.eventbus.util.TestEventFieldExtractor$NoGetter' required.", e.getMessage());
+        assertEquals("Getter for event field 'field' in class 'net.covers1624.eventbus.test.TestEventFieldExtractor$NoGetter' required.", e.getMessage());
     }
 
     @Test
@@ -69,7 +71,7 @@ public class TestEventFieldExtractor {
     @Test
     public void testClassNotInterface() {
         Exception e = assertThrows(IllegalStateException.class, () -> EventFieldExtractor.getEventFields(ClassNotInterface.class));
-        assertEquals("Expected interface. Got: class net.covers1624.eventbus.util.TestEventFieldExtractor$ClassNotInterface", e.getMessage());
+        assertEquals("Expected interface. Got: class net.covers1624.eventbus.test.TestEventFieldExtractor$ClassNotInterface", e.getMessage());
     }
 
     public interface Hierarchy1 extends Event {

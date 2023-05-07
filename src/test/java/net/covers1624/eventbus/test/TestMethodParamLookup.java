@@ -1,6 +1,8 @@
-package net.covers1624.eventbus.util;
+package net.covers1624.eventbus.test;
 
 import net.covers1624.eventbus.api.Named;
+import net.covers1624.eventbus.test.TestBase;
+import net.covers1624.eventbus.util.MethodParamLookup;
 import org.junit.jupiter.api.Test;
 
 import java.util.List;
@@ -10,16 +12,12 @@ import static org.junit.jupiter.api.Assertions.assertEquals;
 /**
  * Created by covers1624 on 16/9/22.
  */
-public class TestMethodParamLookup {
-
-    static {
-        System.setProperty("net.covers1624.eventbus.debug", "true");
-    }
+public class TestMethodParamLookup extends TestBase {
 
     @Test
     public void testMethodsWithoutASM() throws Throwable {
         Class<?> clazz = TestClass.class;
-        MethodParamLookup lookup = new MethodParamLookup(TestEnvironment.WITHOUT_CLASSES);
+        MethodParamLookup lookup = new MethodParamLookup(WITHOUT_CLASSES);
 
         List<String> onEventNames = lookup.findParameterNames(clazz.getMethod("onEvent", String.class, String.class, List.class));
         assertEquals(0, onEventNames.size());
@@ -34,7 +32,7 @@ public class TestMethodParamLookup {
     @Test
     public void testMethodsWithASM() throws Throwable {
         Class<?> clazz = TestClass.class;
-        MethodParamLookup lookup = new MethodParamLookup(TestEnvironment.WITH_CLASSES);
+        MethodParamLookup lookup = new MethodParamLookup(WITH_CLASSES);
 
         List<String> onEventNames = lookup.findParameterNames(clazz.getMethod("onEvent", String.class, String.class, List.class));
         assertEquals(3, onEventNames.size());
@@ -52,7 +50,7 @@ public class TestMethodParamLookup {
     @Test
     public void testInterfaceWithoutASM() throws Throwable {
         Class<?> clazz = TestInterface.class;
-        MethodParamLookup lookup = new MethodParamLookup(TestEnvironment.WITHOUT_CLASSES);
+        MethodParamLookup lookup = new MethodParamLookup(WITHOUT_CLASSES);
 
         List<String> onEventNames = lookup.findParameterNames(clazz.getMethod("fire", String.class, String.class, List.class));
         assertEquals(0, onEventNames.size());
@@ -67,7 +65,7 @@ public class TestMethodParamLookup {
     @Test
     public void testInterfaceWithASM() throws Throwable {
         Class<?> clazz = TestInterface.class;
-        MethodParamLookup lookup = new MethodParamLookup(TestEnvironment.WITH_CLASSES);
+        MethodParamLookup lookup = new MethodParamLookup(WITH_CLASSES);
 
         List<String> onEventNames = lookup.findParameterNames(clazz.getMethod("fire", String.class, String.class, List.class));
         assertEquals(0, onEventNames.size());

@@ -1,4 +1,4 @@
-package net.covers1624.eventbus.util;
+package net.covers1624.eventbus.test;
 
 import net.covers1624.eventbus.api.*;
 import net.covers1624.eventbus.internal.EventBusImpl;
@@ -8,13 +8,9 @@ import org.junit.jupiter.api.Test;
 /**
  * Created by covers1624 on 5/5/23.
  */
-public class TestFastInvokeOnly {
+public class TestFastInvokeOnly extends TestBase {
 
-    static {
-        System.setProperty("net.covers1624.eventbus.debug", "true");
-    }
-
-    public static final EventBus BUS = new EventBusImpl(TestEnvironment.WITH_CLASSES);
+    public static final EventBus BUS = new EventBusImpl(WITH_CLASSES);
 
     @Test
     public void doTest() {
