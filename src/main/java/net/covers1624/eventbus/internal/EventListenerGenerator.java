@@ -2,9 +2,13 @@ package net.covers1624.eventbus.internal;
 
 import net.covers1624.eventbus.api.Environment;
 import net.covers1624.eventbus.api.Event;
-import net.covers1624.eventbus.util.*;
-import net.covers1624.eventbus.util.ClassGenerator.GeneratedField;
-import net.covers1624.eventbus.util.ClassGenerator.InsnGenerator.Var;
+import net.covers1624.eventbus.util.EventClassGenerator;
+import net.covers1624.eventbus.util.EventField;
+import net.covers1624.eventbus.util.EventFieldExtractor;
+import net.covers1624.eventbus.util.Utils;
+import net.covers1624.quack.asm.ClassBuilder;
+import net.covers1624.quack.asm.ClassBuilder.FieldBuilder;
+import net.covers1624.quack.asm.MethodBuilder.BodyGenerator.Var;
 import net.covers1624.quack.collection.ColUtils;
 import net.covers1624.quack.collection.FastStream;
 import org.objectweb.asm.Type;
@@ -37,7 +41,7 @@ public class EventListenerGenerator {
         Method factoryMethod = Utils.getSingleAbstractMethod(eventFactory);
         List<String> factoryParams = event.bus.paramLookup.findParameterNames(factoryMethod);
 
-        ClassGenerator classGen = new ClassGenerator(
+        ClassBuilder classGen = new ClassBuilder(
                 ACC_PUBLIC | ACC_SUPER | ACC_FINAL | ACC_SYNTHETIC,
                 Type.getObjectType(asmName(eventFactory) + "$$Impl$$" + COUNTER.getAndIncrement())
         );
@@ -47,10 +51,10 @@ public class EventListenerGenerator {
         Map<String, EventField> eventFields = EventFieldExtractor.getEventFields(event.eventInterface);
 
         AtomicInteger instanceFieldCounter = new AtomicInteger();
-        Map<ListenerHandle, GeneratedField> instanceFields = new LinkedHashMap<>();
+        Map<ListenerHandle, FieldBuilder> instanceFields = new LinkedHashMap<>();
         for (ListenerHandle listener : listeners) {
             if (listener.instance != null) {
-                GeneratedField instanceField = classGen.addField(
+                FieldBuilder instanceField = classGen.addField(
                         ACC_PRIVATE | ACC_FINAL,
                         "instance$" + instanceFieldCounter.getAndIncrement(),
                         Type.getType(listener.handle.getDeclaringClass())
@@ -59,7 +63,7 @@ public class EventListenerGenerator {
             }
         }
 
-        classGen.addMethod(ACC_PUBLIC | ACC_FINAL, factoryMethod, gen -> {
+        classGen.addMethod(ACC_PUBLIC | ACC_FINAL, factoryMethod).withBody(gen -> {
             Map<String, Var> fieldVars = new HashMap<>();
             for (int i = 0; i < factoryParams.size(); i++) {
                 fieldVars.put(factoryParams.get(i), gen.param(i));
@@ -119,13 +123,13 @@ public class EventListenerGenerator {
         });
 
         Type[] ctorArgs = FastStream.of(instanceFields.values())
-                .map(e -> e.desc)
+                .map(FieldBuilder::desc)
                 .toArray(new Type[0]);
-        classGen.addMethod(ACC_PUBLIC, "<init>", Type.getMethodType(Type.VOID_TYPE, ctorArgs), gen -> {
+        classGen.addMethod(ACC_PUBLIC, "<init>", Type.getMethodType(Type.VOID_TYPE, ctorArgs)).withBody(gen -> {
             gen.loadThis();
             gen.methodInsn(INVOKESPECIAL, Type.getType(eventFactory), "<init>", Type.getMethodType(Type.VOID_TYPE), false);
             int i = 0;
-            for (GeneratedField value : instanceFields.values()) {
+            for (FieldBuilder value : instanceFields.values()) {
                 gen.loadThis();
                 gen.loadParam(i++);
                 gen.putField(value);
@@ -134,7 +138,7 @@ public class EventListenerGenerator {
         });
 
         byte[] bytes = classGen.build();
-        String cName = classGen.getName().getInternalName();
+        String cName = classGen.name().getInternalName();
         if (Environment.DEBUG) {
             debugWriteClass(cName, bytes);
         }

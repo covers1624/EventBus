@@ -2,8 +2,8 @@ package net.covers1624.eventbus.internal;
 
 import net.covers1624.eventbus.api.Environment;
 import net.covers1624.eventbus.api.EventFactory;
-import net.covers1624.eventbus.util.ClassGenerator;
-import net.covers1624.eventbus.util.ClassGenerator.GeneratedField;
+import net.covers1624.quack.asm.ClassBuilder;
+import net.covers1624.quack.asm.ClassBuilder.FieldBuilder;
 import net.covers1624.quack.util.SneakyUtils;
 import org.objectweb.asm.Label;
 import org.objectweb.asm.Type;
@@ -60,16 +60,16 @@ public class EventFactoryDecorator {
         Method forwardMethod = getSingleAbstractMethod(factory);
 
         // TODO see how these names get generated for inner classes.
-        ClassGenerator classGen = new ClassGenerator(ACC_PUBLIC | ACC_SUPER | ACC_FINAL | ACC_SYNTHETIC, synClassName(EventFactoryInternal.class, "Decorated", factory, COUNTER))
+        ClassBuilder classGen = new ClassBuilder(ACC_PUBLIC | ACC_SUPER | ACC_FINAL | ACC_SYNTHETIC, synClassName(EventFactoryInternal.class, "Decorated", factory, COUNTER))
                 .withParent(factoryType)
                 .withInterface(Type.getType(EventFactoryInternal.class));
 
-        GeneratedField eventField = classGen.addField(ACC_PRIVATE | ACC_FINAL, "event", REGISTERED_EVENT);
-        GeneratedField factoryField = classGen.addField(ACC_PRIVATE, "factory", factoryType);
-        GeneratedField dirtyField = classGen.addField(ACC_PRIVATE, "dirty", BOOLEAN_TYPE);
+        FieldBuilder eventField = classGen.addField(ACC_PRIVATE | ACC_FINAL, "event", REGISTERED_EVENT);
+        FieldBuilder factoryField = classGen.addField(ACC_PRIVATE, "factory", factoryType);
+        FieldBuilder dirtyField = classGen.addField(ACC_PRIVATE, "dirty", BOOLEAN_TYPE);
 
         Type ctorDesc = Type.getMethodType(VOID_TYPE, REGISTERED_EVENT);
-        classGen.addMethod(ACC_PUBLIC, "<init>", ctorDesc, gen -> {
+        classGen.addMethod(ACC_PUBLIC, "<init>", ctorDesc).withBody(gen -> {
             gen.loadThis();
             gen.methodInsn(INVOKESPECIAL, factoryType, "<init>", Type.getMethodType(VOID_TYPE), false);
             gen.loadThis();
@@ -81,7 +81,7 @@ public class EventFactoryDecorator {
             gen.ret();
         });
 
-        classGen.addMethod(ACC_PUBLIC | ACC_FINAL, "setFactory", Type.getMethodType(VOID_TYPE, OBJECT_TYPE), gen -> {
+        classGen.addMethod(ACC_PUBLIC | ACC_FINAL, "setFactory", Type.getMethodType(VOID_TYPE, OBJECT_TYPE)).withBody( gen -> {
             gen.loadThis();
             gen.loadParam(0);
             gen.typeInsn(CHECKCAST, factoryType);
@@ -92,20 +92,20 @@ public class EventFactoryDecorator {
             gen.ret();
         });
 
-        classGen.addMethod(ACC_PUBLIC | ACC_FINAL, "setDirty", Type.getMethodType(VOID_TYPE), gen -> {
+        classGen.addMethod(ACC_PUBLIC | ACC_FINAL, "setDirty", Type.getMethodType(VOID_TYPE)).withBody( gen -> {
             gen.loadThis();
             gen.ldcInt(1);
             gen.putField(dirtyField);
             gen.ret();
         });
 
-        classGen.addMethod(ACC_PUBLIC | ACC_FINAL, "isDirty", Type.getMethodType(BOOLEAN_TYPE), gen -> {
+        classGen.addMethod(ACC_PUBLIC | ACC_FINAL, "isDirty", Type.getMethodType(BOOLEAN_TYPE)).withBody( gen -> {
             gen.loadThis();
             gen.getField(dirtyField);
             gen.ret();
         });
 
-        classGen.addMethod(ACC_PUBLIC | ACC_FINAL, forwardMethod.getName(), Type.getType(forwardMethod), gen -> {
+        classGen.addMethod(ACC_PUBLIC | ACC_FINAL, forwardMethod.getName(), Type.getType(forwardMethod)).withBody( gen -> {
             Label fire = new Label();
             Label compute = new Label();
 
@@ -130,7 +130,7 @@ public class EventFactoryDecorator {
         });
 
         byte[] bytes = classGen.build();
-        String cName = classGen.getName().getInternalName();
+        String cName = classGen.name().getInternalName();
         if (Environment.DEBUG) {
             debugWriteClass(cName, bytes);
         }
