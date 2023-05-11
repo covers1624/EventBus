@@ -19,7 +19,7 @@ import java.util.function.Consumer;
  */
 public class EventListenerList {
 
-    private static final Method CONS_METHOD = Utils.getSingleAbstractMethod(Consumer.class);
+    private static final Method CONS_METHOD = Utils.requireSingleAbstractMethod(Consumer.class);
 
     final EventBusImpl bus;
     public final Class<? extends Event> eventInterface;
@@ -27,6 +27,8 @@ public class EventListenerList {
     public final boolean onlyFastInvoke;
     @Nullable
     public final Class<? extends EventFactory> eventFactory;
+    @Nullable
+    public final Method factoryMethod;
     @Nullable
     private final EventFactoryInternal rootFactory;
 
@@ -45,8 +47,10 @@ public class EventListenerList {
         eventFactory = getEnclosedFactory(eventInterface);
         if (eventFactory != null) {
             rootFactory = (EventFactoryInternal) EventFactoryDecorator.generate(this);
+            factoryMethod = getFactoryMethod(eventFactory);
         } else {
             rootFactory = null;
+            factoryMethod = null;
         }
     }
 
@@ -78,7 +82,7 @@ public class EventListenerList {
     }
 
     public void registerListener(Class<? extends EventListener> listener, EventPriority priority, Object lambda) {
-        Method method = Utils.getSingleAbstractMethod(listener);
+        Method method = Utils.requireSingleAbstractMethod(listener);
         addListener(new ListenerHandle(lambda, method, priority, bus.paramLookup.findParameterNames(method)));
     }
 
@@ -107,7 +111,7 @@ public class EventListenerList {
     }
 
     @Nullable
-    public static Class<? extends EventFactory> getEnclosedFactory(Class<? extends Event> eventClazz) {
+    private static Class<? extends EventFactory> getEnclosedFactory(Class<? extends Event> eventClazz) {
         List<Class<?>> factories = FastStream.of(eventClazz.getClasses())
                 .filter(EventFactory.class::isAssignableFrom)
                 .toList();
@@ -118,5 +122,20 @@ public class EventListenerList {
         }
         //noinspection unchecked
         return (Class<? extends EventFactory>) factories.get(0);
+    }
+
+    private Method getFactoryMethod(Class<? extends EventFactory> eventFactory) {
+        Method method = Utils.getSingleAbstractMethod(eventFactory);
+        if (method == null) {
+            throw new IllegalArgumentException("Expected factory " + eventFactory.getName() + " to contain a single abstract method.");
+        }
+
+        List<String> factoryParams = bus.paramLookup.findParameterNames(factoryMethod);
+        for (String param : factoryParams) {
+            if (!fields.containsKey(param)) {
+                throw new IllegalArgumentException("Parameter " + param + " does not map to an event field.");
+            }
+        }
+        return method;
     }
 }

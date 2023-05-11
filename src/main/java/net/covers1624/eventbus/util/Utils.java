@@ -15,6 +15,8 @@ import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.util.concurrent.atomic.AtomicInteger;
 
+import static java.util.Objects.requireNonNull;
+
 /**
  * Created by covers1624 on 17/9/22.
  */
@@ -38,10 +40,15 @@ public class Utils {
         return Type.getObjectType(asmName(base) + "$$" + desc + "$$" + simpleName(extension) + "$$" + counter.getAndIncrement());
     }
 
+
+    public static Method requireSingleAbstractMethod(Class<?> clazz) {
+        return requireNonNull(getSingleAbstractMethod(clazz));
+    }
+    @Nullable
     public static Method getSingleAbstractMethod(Class<?> clazz) {
         return FastStream.of(clazz.getMethods())
                 .filter(e -> (e.getModifiers() & Modifier.ABSTRACT) != 0)
-                .only();
+                .onlyOrDefault();
     }
 
     public static void debugWriteClass(String cName, byte[] bytes) {

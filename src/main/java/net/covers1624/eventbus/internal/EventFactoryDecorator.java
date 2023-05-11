@@ -12,6 +12,7 @@ import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
 import java.util.concurrent.atomic.AtomicInteger;
 
+import static java.util.Objects.requireNonNull;
 import static net.covers1624.eventbus.util.Utils.*;
 import static org.objectweb.asm.Opcodes.*;
 import static org.objectweb.asm.Type.BOOLEAN_TYPE;
@@ -56,8 +57,8 @@ public class EventFactoryDecorator {
     // TODO cache these?
     public static EventFactory generate(EventListenerList event) {
         Class<?> factory = event.eventFactory;
+        Method forwardMethod = event.factoryMethod;
         Type factoryType = Type.getType(factory);
-        Method forwardMethod = getSingleAbstractMethod(factory);
 
         // TODO see how these names get generated for inner classes.
         ClassBuilder classGen = new ClassBuilder(ACC_PUBLIC | ACC_SUPER | ACC_FINAL | ACC_SYNTHETIC, synClassName(EventFactoryInternal.class, "Decorated", factory, COUNTER))

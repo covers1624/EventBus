@@ -4,8 +4,6 @@ import net.covers1624.eventbus.api.Environment;
 import net.covers1624.eventbus.api.Event;
 import net.covers1624.eventbus.util.EventClassGenerator;
 import net.covers1624.eventbus.util.EventField;
-import net.covers1624.eventbus.util.EventFieldExtractor;
-import net.covers1624.eventbus.util.Utils;
 import net.covers1624.quack.asm.ClassBuilder;
 import net.covers1624.quack.asm.ClassBuilder.FieldBuilder;
 import net.covers1624.quack.asm.MethodBuilder.BodyGenerator.Var;
@@ -37,8 +35,8 @@ public class EventListenerGenerator {
 
     public static Object generateEventFactory(EventListenerList event) {
         Class<?> eventFactory = event.eventFactory;
+        Method factoryMethod = event.factoryMethod;
         List<ListenerHandle> listeners = event.getListeners();
-        Method factoryMethod = Utils.getSingleAbstractMethod(eventFactory);
         List<String> factoryParams = event.bus.paramLookup.findParameterNames(factoryMethod);
 
         ClassBuilder classGen = new ClassBuilder(
@@ -48,7 +46,6 @@ public class EventListenerGenerator {
         classGen.withParent(Type.getType(eventFactory));
 
         boolean requiresEventClass = ColUtils.anyMatch(listeners, e -> !e.isFastInvoke());
-        Map<String, EventField> eventFields = EventFieldExtractor.getEventFields(event.eventInterface);
 
         AtomicInteger instanceFieldCounter = new AtomicInteger();
         Map<ListenerHandle, FieldBuilder> instanceFields = new LinkedHashMap<>();
@@ -77,14 +74,14 @@ public class EventListenerGenerator {
                 Map<String, Method> methods = FastStream.of(eventClass.getDeclaredMethods())
                         .toImmutableMap(Method::getName, e -> e);
 
-                for (EventField value : eventFields.values()) {
+                for (EventField value : event.fields.values()) {
                     eventGetters.put(value.name, methods.get(value.getter.getName()));
                 }
 
                 eventVar = gen.newVar(Type.getType(eventClass));
                 gen.typeInsn(NEW, Type.getType(eventClass));
                 gen.insn(DUP);
-                for (String s : eventFields.keySet()) {
+                for (String s : event.fields.keySet()) {
                     gen.load(fieldVars.get(s));
                 }
                 gen.methodInsn(INVOKESPECIAL, Type.getType(eventClass), "<init>", Type.getType(ctor), false);
@@ -101,7 +98,7 @@ public class EventListenerGenerator {
                 if (listener.isFastInvoke()) {
                     // Emit each parameter as declared by the handle.
                     for (String param : listener.getParams()) {
-                        EventField field = eventFields.get(param);
+                        EventField field = event.fields.get(param);
                         if (field.isImmutable() || eventVar == null) {
                             // Field is immutable, we can just emit the param.
                             gen.load(fieldVars.get(param));
