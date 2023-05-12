@@ -29,7 +29,9 @@ public interface Environment {
      * @return The classes bytes.
      */
     @Nullable
-    InputStream getClassStream(Class<?> clazz);
+    default InputStream getClassStream(Class<?> clazz) {
+        return getResourceStream("/" + clazz.getName().replace('.', '/') + ".class");
+    }
 
     /**
      * Get the stream for a resource.

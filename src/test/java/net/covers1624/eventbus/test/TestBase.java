@@ -21,23 +21,11 @@ public abstract class TestBase {
     public static TestEnvironment WITHOUT_RESOURCES = new TestEnvironment() {
         @Override
         @Nullable
-        public InputStream getClassStream(Class<?> clazz) {
-            return null;
-        }
-
-        @Override
-        @Nullable
         public InputStream getResourceStream(String resource) {
             return null;
         }
     };
     public static TestEnvironment WITH_RESOURCES = new TestEnvironment() {
-        @Override
-        @Nullable
-        public InputStream getClassStream(Class<?> clazz) {
-            return TestBase.class.getResourceAsStream("/" + clazz.getName().replace('.', '/') + ".class");
-        }
-
         @Override
         @Nullable
         public InputStream getResourceStream(String resource) {
