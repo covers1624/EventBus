@@ -1,7 +1,6 @@
 package net.covers1624.eventbus.test;
 
 import net.covers1624.eventbus.api.Event;
-import net.covers1624.eventbus.test.TestBase;
 import net.covers1624.eventbus.util.EventClassGenerator;
 import org.junit.jupiter.api.Test;
 
@@ -13,7 +12,7 @@ public class TestEventClassGenerator extends TestBase {
     @Test
     public void doTest() {
         EventClassGenerator generator = new EventClassGenerator();
-        generator.createEventClass(WITH_CLASSES, Hierarchy.class);
+        generator.createEventClass(WITH_RESOURCES, Hierarchy.class);
     }
 
     public interface Hierarchy1 extends Event {

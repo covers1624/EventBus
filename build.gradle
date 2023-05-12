@@ -21,9 +21,18 @@ repositories {
     maven { url 'https://maven.covers1624.net' }
 }
 
+sourceSets {
+    ap
+}
+
 configurations {
+    apCompileOnly.extendsFrom compileOnly
+    apImplementation.extendsFrom implementation
+
     testCompileOnly.extendsFrom compileOnly
     testImplementation.extendsFrom implementation
+
+    testAnnotationProcessor.extendsFrom implementation
 }
 
 dependencies {
@@ -36,9 +45,13 @@ dependencies {
     api 'com.google.guava:guava:30.1.1-jre'
     api 'net.covers1624:Quack:0.4.7.70'
 
+    apImplementation sourceSets.main.output
+
     compileOnly 'com.google.code.findbugs:jsr305:3.0.2'
     compileOnly 'org.jetbrains:annotations:24.0.1'
 
+    testAnnotationProcessor sourceSets.main.output
+    testAnnotationProcessor sourceSets.ap.output
     testImplementation 'org.junit.jupiter:junit-jupiter-api:5.7.2'
     testRuntimeOnly 'org.junit.jupiter:junit-jupiter-engine:5.7.2'
     testRuntimeOnly 'org.slf4j:slf4j-simple:1.7.32'
@@ -46,6 +59,10 @@ dependencies {
 
 test {
     useJUnitPlatform()
+}
+
+jar {
+    from sourceSets.ap.output
 }
 
 publishing {

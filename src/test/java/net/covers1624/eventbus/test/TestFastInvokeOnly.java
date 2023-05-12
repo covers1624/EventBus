@@ -10,7 +10,7 @@ import org.junit.jupiter.api.Test;
  */
 public class TestFastInvokeOnly extends TestBase {
 
-    public static final EventBus BUS = new EventBusImpl(WITH_CLASSES);
+    public static final EventBus BUS = new EventBusImpl(WITH_RESOURCES);
 
     @Test
     public void doTest() {

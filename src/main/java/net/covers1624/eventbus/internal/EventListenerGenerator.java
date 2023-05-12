@@ -37,7 +37,7 @@ public class EventListenerGenerator {
         Class<?> eventFactory = event.eventFactory;
         Method factoryMethod = event.factoryMethod;
         List<ListenerHandle> listeners = event.getListeners();
-        List<String> factoryParams = event.bus.paramLookup.findParameterNames(factoryMethod);
+        List<String> factoryParams = event.bus.paramLookup.getMethodParams(factoryMethod);
 
         ClassBuilder classGen = new ClassBuilder(
                 ACC_PUBLIC | ACC_SUPER | ACC_FINAL | ACC_SYNTHETIC,

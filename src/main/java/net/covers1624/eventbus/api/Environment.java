@@ -32,6 +32,17 @@ public interface Environment {
     InputStream getClassStream(Class<?> clazz);
 
     /**
+     * Get the stream for a resource.
+     * <p>
+     * This is used for reading META-INF parameter mapping files.
+     *
+     * @param resource The resource file.
+     * @return The resource stream.
+     */
+    @Nullable
+    InputStream getResourceStream(String resource);
+
+    /**
      * Define the given class.
      *
      * @param cName The name of the class.

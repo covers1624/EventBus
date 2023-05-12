@@ -13,7 +13,7 @@ import static org.junit.jupiter.api.Assertions.assertEquals;
  */
 public class LargeNumberOfEventSubscribersTest extends TestBase {
 
-    private static final EventBus BUS = new EventBusImpl(WITH_CLASSES);
+    private static final EventBus BUS = new EventBusImpl(WITH_RESOURCES);
 
     @Test
     public void doTest() {

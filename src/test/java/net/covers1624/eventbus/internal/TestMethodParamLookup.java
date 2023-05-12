@@ -1,8 +1,7 @@
-package net.covers1624.eventbus.test;
+package net.covers1624.eventbus.internal;
 
 import net.covers1624.eventbus.api.Named;
 import net.covers1624.eventbus.test.TestBase;
-import net.covers1624.eventbus.util.MethodParamLookup;
 import org.junit.jupiter.api.Test;
 
 import java.util.List;
@@ -17,12 +16,12 @@ public class TestMethodParamLookup extends TestBase {
     @Test
     public void testMethodsWithoutASM() throws Throwable {
         Class<?> clazz = TestClass.class;
-        MethodParamLookup lookup = new MethodParamLookup(WITHOUT_CLASSES);
+        MethodParamLookup lookup = new MethodParamLookup(WITHOUT_RESOURCES);
 
-        List<String> onEventNames = lookup.findParameterNames(clazz.getMethod("onEvent", String.class, String.class, List.class));
+        List<String> onEventNames = lookup.getMethodParams(clazz.getMethod("onEvent", String.class, String.class, List.class));
         assertEquals(0, onEventNames.size());
 
-        List<String> onEventNamedNames = lookup.findParameterNames(clazz.getMethod("onEventNamed", String.class, String.class, List.class));
+        List<String> onEventNamedNames = lookup.getMethodParams(clazz.getMethod("onEventNamed", String.class, String.class, List.class));
         assertEquals(3, onEventNamedNames.size());
         assertEquals("one", onEventNamedNames.get(0));
         assertEquals("two", onEventNamedNames.get(1));
@@ -32,15 +31,15 @@ public class TestMethodParamLookup extends TestBase {
     @Test
     public void testMethodsWithASM() throws Throwable {
         Class<?> clazz = TestClass.class;
-        MethodParamLookup lookup = new MethodParamLookup(WITH_CLASSES);
+        MethodParamLookup lookup = new MethodParamLookup(WITH_RESOURCES);
 
-        List<String> onEventNames = lookup.findParameterNames(clazz.getMethod("onEvent", String.class, String.class, List.class));
+        List<String> onEventNames = lookup.getMethodParams(clazz.getMethod("onEvent", String.class, String.class, List.class));
         assertEquals(3, onEventNames.size());
         assertEquals("a", onEventNames.get(0));
         assertEquals("b", onEventNames.get(1));
         assertEquals("c", onEventNames.get(2));
 
-        List<String> onEventNamedNames = lookup.findParameterNames(clazz.getMethod("onEventNamed", String.class, String.class, List.class));
+        List<String> onEventNamedNames = lookup.getMethodParams(clazz.getMethod("onEventNamed", String.class, String.class, List.class));
         assertEquals(3, onEventNamedNames.size());
         assertEquals("one", onEventNamedNames.get(0));
         assertEquals("two", onEventNamedNames.get(1));
@@ -50,12 +49,12 @@ public class TestMethodParamLookup extends TestBase {
     @Test
     public void testInterfaceWithoutASM() throws Throwable {
         Class<?> clazz = TestInterface.class;
-        MethodParamLookup lookup = new MethodParamLookup(WITHOUT_CLASSES);
+        MethodParamLookup lookup = new MethodParamLookup(WITHOUT_RESOURCES);
 
-        List<String> onEventNames = lookup.findParameterNames(clazz.getMethod("fire", String.class, String.class, List.class));
+        List<String> onEventNames = lookup.getMethodParams(clazz.getMethod("fire", String.class, String.class, List.class));
         assertEquals(0, onEventNames.size());
 
-        List<String> onEventNamedNames = lookup.findParameterNames(clazz.getMethod("fireNamed", String.class, String.class, List.class));
+        List<String> onEventNamedNames = lookup.getMethodParams(clazz.getMethod("fireNamed", String.class, String.class, List.class));
         assertEquals(3, onEventNamedNames.size());
         assertEquals("one", onEventNamedNames.get(0));
         assertEquals("two", onEventNamedNames.get(1));
@@ -65,12 +64,12 @@ public class TestMethodParamLookup extends TestBase {
     @Test
     public void testInterfaceWithASM() throws Throwable {
         Class<?> clazz = TestInterface.class;
-        MethodParamLookup lookup = new MethodParamLookup(WITH_CLASSES);
+        MethodParamLookup lookup = new MethodParamLookup(WITH_RESOURCES);
 
-        List<String> onEventNames = lookup.findParameterNames(clazz.getMethod("fire", String.class, String.class, List.class));
+        List<String> onEventNames = lookup.getMethodParams(clazz.getMethod("fire", String.class, String.class, List.class));
         assertEquals(0, onEventNames.size());
 
-        List<String> onEventNamedNames = lookup.findParameterNames(clazz.getMethod("fireNamed", String.class, String.class, List.class));
+        List<String> onEventNamedNames = lookup.getMethodParams(clazz.getMethod("fireNamed", String.class, String.class, List.class));
         assertEquals(3, onEventNamedNames.size());
         assertEquals("one", onEventNamedNames.get(0));
         assertEquals("two", onEventNamedNames.get(1));

@@ -4,7 +4,9 @@ import javax.lang.model.element.Element;
 import javax.lang.model.element.ElementKind;
 import javax.lang.model.type.ArrayType;
 import javax.lang.model.type.DeclaredType;
+import javax.lang.model.type.TypeKind;
 import javax.lang.model.type.TypeMirror;
+import java.util.Objects;
 
 /**
  * Created by covers1624 on 28/7/21.
@@ -33,12 +35,19 @@ public class Utils {
             case ARRAY:
                 return "[" + toInternalType(((ArrayType) type).getComponentType());
             case DECLARED:
-                return "L" + buildDeclaredName(((DeclaredType) type).asElement()) + ";";
+                return "L" + toInternalName(type) + ";";
             case VOID:
                 return "V";
             default:
                 throw new UnsupportedOperationException("Unhandled TypeMirror kind." + type.getKind());
         }
+    }
+
+    public static String toInternalName(TypeMirror type) {
+        if (type.getKind() == TypeKind.DECLARED) {
+            return buildDeclaredName(((DeclaredType) type).asElement());
+        }
+        throw new UnsupportedOperationException("Unhandled TypeMirror kind." + type.getKind());
     }
 
     //Builds the Internal name for a given element. This assumes the name is a Class/Interface/Enum.

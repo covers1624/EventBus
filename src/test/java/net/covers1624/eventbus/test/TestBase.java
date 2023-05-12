@@ -18,18 +18,30 @@ public abstract class TestBase {
 
     private static final AccessibleClassLoader cl = new ThreadContextClassLoader();
 
-    public static TestEnvironment WITHOUT_CLASSES = new TestEnvironment() {
+    public static TestEnvironment WITHOUT_RESOURCES = new TestEnvironment() {
         @Override
         @Nullable
         public InputStream getClassStream(Class<?> clazz) {
             return null;
         }
+
+        @Override
+        @Nullable
+        public InputStream getResourceStream(String resource) {
+            return null;
+        }
     };
-    public static TestEnvironment WITH_CLASSES = new TestEnvironment() {
+    public static TestEnvironment WITH_RESOURCES = new TestEnvironment() {
         @Override
         @Nullable
         public InputStream getClassStream(Class<?> clazz) {
             return TestBase.class.getResourceAsStream("/" + clazz.getName().replace('.', '/') + ".class");
+        }
+
+        @Override
+        @Nullable
+        public InputStream getResourceStream(String resource) {
+            return TestBase.class.getResourceAsStream(resource);
         }
     };
 

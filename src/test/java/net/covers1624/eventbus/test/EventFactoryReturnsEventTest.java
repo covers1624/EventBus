@@ -12,7 +12,7 @@ import org.junit.jupiter.api.Test;
  */
 public class EventFactoryReturnsEventTest extends TestBase {
 
-    private static final EventBus BUS = new EventBusImpl(WITH_CLASSES);
+    private static final EventBus BUS = new EventBusImpl(WITH_RESOURCES);
 
     @Test
     public void doTest() {

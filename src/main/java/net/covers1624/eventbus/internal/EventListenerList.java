@@ -83,7 +83,7 @@ public class EventListenerList {
 
     public void registerListener(Class<? extends EventListener> listener, EventPriority priority, Object lambda) {
         Method method = Utils.requireSingleAbstractMethod(listener);
-        addListener(new ListenerHandle(lambda, method, priority, bus.paramLookup.findParameterNames(method)));
+        addListener(new ListenerHandle(lambda, method, priority, bus.paramLookup.getMethodParams(method)));
     }
 
     public void registerEventConsumerListener(EventPriority priority, Consumer<?> cons) {
@@ -130,7 +130,7 @@ public class EventListenerList {
             throw new IllegalArgumentException("Expected factory " + eventFactory.getName() + " to contain a single abstract method.");
         }
 
-        List<String> factoryParams = bus.paramLookup.findParameterNames(method);
+        List<String> factoryParams = bus.paramLookup.getMethodParams(method);
         for (String param : factoryParams) {
             if (!fields.containsKey(param)) {
                 throw new IllegalArgumentException("Parameter " + param + " does not map to an event field.");

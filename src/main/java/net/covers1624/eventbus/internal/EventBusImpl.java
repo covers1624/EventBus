@@ -1,7 +1,6 @@
 package net.covers1624.eventbus.internal;
 
 import net.covers1624.eventbus.api.*;
-import net.covers1624.eventbus.util.MethodParamLookup;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -90,7 +89,7 @@ public class EventBusImpl implements EventBus {
             getListenerList(paramEvent)
                     .registerEventConsumerMethod(object, method, sub.priority());
         } else if (annotationEvent != null) {
-            List<String> params = paramLookup.findParameterNames(method);
+            List<String> params = paramLookup.getMethodParams(method);
             if (params.size() != args.length) {
                 LOGGER.error("Unable to extract all method param names. " + method);
                 return;
