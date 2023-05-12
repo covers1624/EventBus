@@ -46,11 +46,11 @@ public class EventListenerList {
 
         eventFactory = getEnclosedFactory(eventInterface);
         if (eventFactory != null) {
-            rootFactory = (EventFactoryInternal) EventFactoryDecorator.generate(this);
             factoryMethod = getFactoryMethod(eventFactory);
+            rootFactory = (EventFactoryInternal) EventFactoryDecorator.generate(this);
         } else {
-            rootFactory = null;
             factoryMethod = null;
+            rootFactory = null;
         }
     }
 
@@ -130,12 +130,18 @@ public class EventListenerList {
             throw new IllegalArgumentException("Expected factory " + eventFactory.getName() + " to contain a single abstract method.");
         }
 
-        List<String> factoryParams = bus.paramLookup.findParameterNames(factoryMethod);
+        List<String> factoryParams = bus.paramLookup.findParameterNames(method);
         for (String param : factoryParams) {
             if (!fields.containsKey(param)) {
                 throw new IllegalArgumentException("Parameter " + param + " does not map to an event field.");
             }
         }
+
+        Class<?> clazz = method.getReturnType();
+        if (clazz != void.class && clazz != eventInterface) {
+            throw new IllegalArgumentException("Expected factory " + eventFactory.getName() + " to return void or " + eventInterface.getName());
+        }
+
         return method;
     }
 }

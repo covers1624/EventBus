@@ -45,7 +45,8 @@ public class EventListenerGenerator {
         );
         classGen.withParent(Type.getType(eventFactory));
 
-        boolean requiresEventClass = ColUtils.anyMatch(listeners, e -> !e.isFastInvoke());
+        boolean returnsEventInstance = factoryMethod.getReturnType() != void.class;
+        boolean requiresEventClass = returnsEventInstance || ColUtils.anyMatch(listeners, e -> !e.isFastInvoke());
 
         AtomicInteger instanceFieldCounter = new AtomicInteger();
         Map<ListenerHandle, FieldBuilder> instanceFields = new LinkedHashMap<>();
@@ -114,7 +115,9 @@ public class EventListenerGenerator {
                 }
                 // Emit invoke of handle
                 gen.methodInsn(listener.handle);
-                // TODO assert handle has void return and add pops if required.
+            }
+            if (returnsEventInstance) {
+                gen.load(eventVar);
             }
             gen.ret();
         });
