@@ -5,6 +5,7 @@ import net.covers1624.eventbus.api.EventFactory;
 import net.covers1624.quack.asm.ClassBuilder;
 import net.covers1624.quack.asm.ClassBuilder.FieldBuilder;
 import net.covers1624.quack.util.SneakyUtils;
+import org.jetbrains.annotations.ApiStatus;
 import org.objectweb.asm.Label;
 import org.objectweb.asm.Type;
 
@@ -21,6 +22,7 @@ import static org.objectweb.asm.Type.VOID_TYPE;
 /**
  * Created by covers1624 on 17/9/22.
  */
+@ApiStatus.Internal
 class EventFactoryDecorator {
 
     private static final AtomicInteger COUNTER = new AtomicInteger();

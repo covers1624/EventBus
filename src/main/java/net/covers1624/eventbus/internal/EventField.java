@@ -1,5 +1,6 @@
 package net.covers1624.eventbus.internal;
 
+import org.jetbrains.annotations.ApiStatus;
 import org.jetbrains.annotations.Nullable;
 
 import java.lang.reflect.Method;
@@ -13,6 +14,7 @@ import java.util.StringJoiner;
  * <p>
  * Created by covers1624 on 10/4/21.
  */
+@ApiStatus.Internal
 class EventField {
 
     public final String name;

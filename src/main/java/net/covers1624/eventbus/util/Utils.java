@@ -2,6 +2,7 @@ package net.covers1624.eventbus.util;
 
 import net.covers1624.quack.collection.FastStream;
 import net.covers1624.quack.io.IOUtils;
+import org.jetbrains.annotations.ApiStatus;
 import org.jetbrains.annotations.Contract;
 import org.jetbrains.annotations.Nullable;
 import org.objectweb.asm.Type;
@@ -20,6 +21,7 @@ import static java.util.Objects.requireNonNull;
 /**
  * Created by covers1624 on 17/9/22.
  */
+@ApiStatus.Internal
 public class Utils {
 
     public static String asmName(Class<?> clazz) {
@@ -40,10 +42,10 @@ public class Utils {
         return Type.getObjectType(asmName(base) + "$$" + desc + "$$" + simpleName(extension) + "$$" + counter.getAndIncrement());
     }
 
-
     public static Method requireSingleAbstractMethod(Class<?> clazz) {
         return requireNonNull(getSingleAbstractMethod(clazz));
     }
+
     @Nullable
     public static Method getSingleAbstractMethod(Class<?> clazz) {
         return FastStream.of(clazz.getMethods())

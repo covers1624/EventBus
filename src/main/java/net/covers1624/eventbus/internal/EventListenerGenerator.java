@@ -7,6 +7,7 @@ import net.covers1624.quack.asm.ClassBuilder.FieldBuilder;
 import net.covers1624.quack.asm.MethodBuilder.BodyGenerator.Var;
 import net.covers1624.quack.collection.ColUtils;
 import net.covers1624.quack.collection.FastStream;
+import org.jetbrains.annotations.ApiStatus;
 import org.objectweb.asm.Type;
 
 import java.lang.reflect.Constructor;
@@ -25,6 +26,7 @@ import static org.objectweb.asm.Opcodes.*;
 /**
  * Created by covers1624 on 18/9/22.
  */
+@ApiStatus.Internal
 class EventListenerGenerator {
 
     private static final AtomicInteger COUNTER = new AtomicInteger();

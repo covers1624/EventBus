@@ -5,6 +5,7 @@ import net.covers1624.eventbus.api.Event;
 import net.covers1624.quack.asm.ClassBuilder;
 import net.covers1624.quack.asm.ClassBuilder.FieldBuilder;
 import net.covers1624.quack.collection.FastStream;
+import org.jetbrains.annotations.ApiStatus;
 import org.objectweb.asm.Type;
 
 import java.util.ArrayList;
@@ -21,6 +22,7 @@ import static org.objectweb.asm.Type.VOID_TYPE;
 /**
  * Created by covers1624 on 11/4/21.
  */
+@ApiStatus.Internal
 class EventClassGenerator {
 
     private static final Type OBJECT_TYPE = Type.getType(Object.class);
@@ -68,7 +70,7 @@ class EventClassGenerator {
 
         // Constructor with all fields as parameters.
         Type[] ctorArgs = FastStream.of(fields.values()).map(EventField::getType).toArray(new Type[0]);
-        classGen.addMethod(ACC_PUBLIC, "<init>", Type.getMethodType(VOID_TYPE, ctorArgs)).withBody( gen -> {
+        classGen.addMethod(ACC_PUBLIC, "<init>", Type.getMethodType(VOID_TYPE, ctorArgs)).withBody(gen -> {
             gen.loadThis();
             gen.methodInsn(INVOKESPECIAL, OBJECT_TYPE, "<init>", Type.getMethodType(VOID_TYPE), false);
             for (int i = 0; i < ctorArgs.length; i++) {

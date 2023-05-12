@@ -3,6 +3,7 @@ package net.covers1624.eventbus.internal;
 import net.covers1624.eventbus.api.*;
 import net.covers1624.eventbus.util.Utils;
 import net.covers1624.quack.collection.FastStream;
+import org.jetbrains.annotations.ApiStatus;
 import org.jetbrains.annotations.Nullable;
 
 import java.lang.reflect.Method;
@@ -15,6 +16,7 @@ import java.util.function.Consumer;
 /**
  * Created by covers1624 on 17/9/22.
  */
+@ApiStatus.Internal
 public class EventListenerList {
 
     private static final Method CONS_METHOD = Utils.requireSingleAbstractMethod(Consumer.class);

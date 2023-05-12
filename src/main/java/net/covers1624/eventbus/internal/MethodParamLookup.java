@@ -5,6 +5,7 @@ import com.google.common.collect.ImmutableMap;
 import net.covers1624.eventbus.api.Environment;
 import net.covers1624.eventbus.api.ParameterNames;
 import net.covers1624.quack.collection.FastStream;
+import org.jetbrains.annotations.ApiStatus;
 import org.jetbrains.annotations.Nullable;
 import org.objectweb.asm.*;
 import org.slf4j.Logger;
@@ -25,6 +26,7 @@ import java.util.concurrent.ConcurrentHashMap;
 /**
  * Created by covers1624 on 9/4/21.
  */
+@ApiStatus.Internal
 class MethodParamLookup {
 
     private static final Logger LOGGER = LoggerFactory.getLogger(MethodParamLookup.class);

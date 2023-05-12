@@ -1,6 +1,8 @@
 package net.covers1624.eventbus.internal;
 
 import net.covers1624.eventbus.api.*;
+import org.jetbrains.annotations.ApiStatus;
+import org.jetbrains.annotations.Nullable;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -16,6 +18,7 @@ import static net.covers1624.quack.util.SneakyUtils.unsafeCast;
 /**
  * Created by covers1624 on 9/4/21.
  */
+@ApiStatus.Internal
 public class EventBusImpl implements EventBus {
 
     private static final Logger LOGGER = LoggerFactory.getLogger(EventBusImpl.class);
