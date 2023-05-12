@@ -3,6 +3,7 @@ package net.covers1624.eventbus.internal;
 import com.google.common.collect.ImmutableMap;
 import net.covers1624.eventbus.Event;
 import org.jetbrains.annotations.ApiStatus;
+import org.jetbrains.annotations.Nullable;
 
 import java.lang.reflect.Method;
 import java.lang.reflect.Modifier;
@@ -13,6 +14,8 @@ import java.util.HashMap;
 import java.util.LinkedHashMap;
 import java.util.Map;
 import java.util.concurrent.ConcurrentHashMap;
+
+import static java.util.Objects.requireNonNull;
 
 /**
  * Utility class for extracting {@link EventField} entries from a given Class.
@@ -131,9 +134,13 @@ class EventFieldExtractor {
     private static class FieldBuilder {
 
         public String name;
+        @Nullable
         public Method getter;
+        @Nullable
         public Method setter;
+        @Nullable
         public Class<?> type;
+        @Nullable
         public Type genericType;
 
         public FieldBuilder(String name) {
@@ -161,7 +168,7 @@ class EventFieldExtractor {
         }
 
         public EventField build() {
-            return new EventField(name, type, genericType, getter, setter);
+            return new EventField(name, requireNonNull(type), requireNonNull(genericType), requireNonNull(getter), setter);
         }
     }
 }

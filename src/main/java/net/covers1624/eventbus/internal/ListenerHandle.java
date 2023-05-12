@@ -32,6 +32,7 @@ class ListenerHandle {
         return params != null;
     }
 
+    @Nullable
     public List<String> getParams() {
         return params;
     }

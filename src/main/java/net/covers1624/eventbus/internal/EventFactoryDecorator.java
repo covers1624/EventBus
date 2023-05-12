@@ -13,6 +13,7 @@ import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
 import java.util.concurrent.atomic.AtomicInteger;
 
+import static java.util.Objects.requireNonNull;
 import static net.covers1624.eventbus.internal.Utils.debugWriteClass;
 import static net.covers1624.eventbus.internal.Utils.synClassName;
 import static org.objectweb.asm.Opcodes.*;
@@ -58,8 +59,8 @@ class EventFactoryDecorator {
      */
     // TODO cache these?
     public static EventFactory generate(EventListenerList event) {
-        Class<?> factory = event.eventFactory;
-        Method forwardMethod = event.factoryMethod;
+        Class<?> factory = requireNonNull(event.eventFactory);
+        Method forwardMethod = requireNonNull(event.factoryMethod);
         Type factoryType = Type.getType(factory);
 
         // TODO see how these names get generated for inner classes.

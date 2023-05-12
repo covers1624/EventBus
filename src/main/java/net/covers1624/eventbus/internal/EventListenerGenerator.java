@@ -19,6 +19,7 @@ import java.util.List;
 import java.util.Map;
 import java.util.concurrent.atomic.AtomicInteger;
 
+import static java.util.Objects.requireNonNull;
 import static net.covers1624.eventbus.internal.Utils.asmName;
 import static net.covers1624.eventbus.internal.Utils.debugWriteClass;
 import static org.objectweb.asm.Opcodes.*;
@@ -34,8 +35,8 @@ class EventListenerGenerator {
     private static final EventClassGenerator EVENT_CLASS_GENERATOR = new EventClassGenerator();
 
     public static Object generateEventFactory(EventListenerList event) {
-        Class<?> eventFactory = event.eventFactory;
-        Method factoryMethod = event.factoryMethod;
+        Class<?> eventFactory = requireNonNull(event.eventFactory);
+        Method factoryMethod = requireNonNull(event.factoryMethod);
         List<ListenerHandle> listeners = event.getListeners();
         List<String> factoryParams = event.bus.paramLookup.getMethodParams(factoryMethod);
 

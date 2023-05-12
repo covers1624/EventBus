@@ -42,7 +42,7 @@ public class EventBusImpl implements EventBus {
     @Override
     public <T extends EventFactory> T constructFactory(Class<T> factoryClass, Class<? extends Event> eventClass) {
         EventListenerList list = getListenerList(eventClass);
-        if (!factoryClass.equals(list.eventFactory)) {
+        if (factoryClass == list.eventFactory) {
             throw new IllegalArgumentException("Invalid EventFactory supplied. Expected: " + list.eventFactory.getName() + ". Got: " + factoryClass.getName());
         }
 
@@ -74,7 +74,7 @@ public class EventBusImpl implements EventBus {
         }
     }
 
-    private void tryRegisterMethod(Object object, Method method) {
+    private void tryRegisterMethod(@Nullable Object object, Method method) {
         SubscribeEvent sub = method.getDeclaredAnnotation(SubscribeEvent.class);
         if (sub == null) {
             LOGGER.debug("Method does not have SubscribeEvent annotation.");
@@ -122,8 +122,6 @@ public class EventBusImpl implements EventBus {
     @Override
     public <T extends EventListener> void registerListener(Class<T> listenerType, EventPriority priority, T func) {
         EventListenerList list = getListenerList(EventListenerList.getEventForListener(listenerType));
-        if (list == null) throw new IllegalArgumentException(String.format("No event with listener '%s' is registered.", listenerType.getName()));
-
         LOGGER.info("Registered fast invoke lambda event listener for {}.", list.eventInterface.getName());
         list.registerListener(listenerType, priority, func);
     }
@@ -131,8 +129,6 @@ public class EventBusImpl implements EventBus {
     @Override
     public <T extends Event> void registerListener(Class<T> eventClass, EventPriority priority, Consumer<T> func) {
         EventListenerList list = getListenerList(eventClass);
-        if (list == null) throw new IllegalArgumentException(String.format("No event with class '%s' is registered.", eventClass.getName()));
-
         LOGGER.info("Registered event class lambda event listener for {}.", list.eventInterface.getName());
         list.registerEventConsumerListener(priority, func);
     }

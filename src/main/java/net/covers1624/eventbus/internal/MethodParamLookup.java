@@ -70,6 +70,7 @@ class MethodParamLookup {
         }
     }
 
+    @Nullable
     private List<String> computeMethodParams(Method method) {
         // Try loading via annotation.
         List<String> params = loadNamedParams(method);

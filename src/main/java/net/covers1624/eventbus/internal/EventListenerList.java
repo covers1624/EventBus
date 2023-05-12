@@ -12,6 +12,8 @@ import java.util.List;
 import java.util.Map;
 import java.util.function.Consumer;
 
+import static java.util.Objects.requireNonNull;
+
 /**
  * Created by covers1624 on 17/9/22.
  */
@@ -54,7 +56,7 @@ public class EventListenerList {
     }
 
     EventFactory getRootFactory() {
-        return (EventFactory) rootFactory;
+        return (EventFactory) requireNonNull(rootFactory);
     }
 
     List<ListenerHandle> getListeners() {
@@ -65,6 +67,7 @@ public class EventListenerList {
     }
 
     public void rebuildEventList() {
+        assert rootFactory != null;
         synchronized (this) {
             if (!rootFactory.isDirty()) return;
 
