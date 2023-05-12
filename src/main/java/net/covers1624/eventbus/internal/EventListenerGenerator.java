@@ -48,6 +48,9 @@ public class EventListenerGenerator {
         boolean returnsEventInstance = factoryMethod.getReturnType() != void.class;
         boolean requiresEventClass = returnsEventInstance || ColUtils.anyMatch(listeners, e -> !e.isFastInvoke());
 
+        // Max method params is 255, 254 minus the 'this' type.
+        boolean requiresArrayCtor = listeners.size() > 254;
+
         AtomicInteger instanceFieldCounter = new AtomicInteger();
         Map<ListenerHandle, FieldBuilder> instanceFields = new LinkedHashMap<>();
         for (ListenerHandle listener : listeners) {
@@ -122,16 +125,29 @@ public class EventListenerGenerator {
             gen.ret();
         });
 
-        Type[] ctorArgs = FastStream.of(instanceFields.values())
-                .map(FieldBuilder::desc)
-                .toArray(new Type[0]);
+        Type[] ctorArgs;
+        if (!requiresArrayCtor) {
+            ctorArgs = FastStream.of(instanceFields.values())
+                    .map(FieldBuilder::desc)
+                    .toArray(new Type[0]);
+        } else {
+            ctorArgs = new Type[] { Type.getType("[Ljava/lang/Object;") };
+        }
         classGen.addMethod(ACC_PUBLIC, "<init>", Type.getMethodType(Type.VOID_TYPE, ctorArgs)).withBody(gen -> {
             gen.loadThis();
             gen.methodInsn(INVOKESPECIAL, Type.getType(eventFactory), "<init>", Type.getMethodType(Type.VOID_TYPE), false);
+
             int i = 0;
             for (FieldBuilder value : instanceFields.values()) {
                 gen.loadThis();
-                gen.loadParam(i++);
+                if (!requiresArrayCtor) {
+                    gen.loadParam(i++);
+                } else {
+                    gen.loadParam(0);
+                    gen.ldc(i++);
+                    gen.insn(AALOAD);
+                    gen.typeInsn(CHECKCAST, value.desc());
+                }
                 gen.putField(value);
             }
             gen.ret();
@@ -146,7 +162,11 @@ public class EventListenerGenerator {
         Constructor<?> ctor = clazz.getConstructors()[0];
 
         try {
-            return ctor.newInstance(FastStream.of(instanceFields.keySet()).map(e -> e.instance).toArray());
+            Object[] args = FastStream.of(instanceFields.keySet()).map(e -> e.instance).toArray();
+            if (requiresArrayCtor) {
+                args = new Object[] { args };
+            }
+            return ctor.newInstance(args);
         } catch (InstantiationException | IllegalAccessException | InvocationTargetException e) {
             throw new RuntimeException(e);
         }
