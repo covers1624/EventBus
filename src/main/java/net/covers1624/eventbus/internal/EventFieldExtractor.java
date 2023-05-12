@@ -2,7 +2,6 @@ package net.covers1624.eventbus.internal;
 
 import com.google.common.collect.ImmutableMap;
 import net.covers1624.eventbus.api.Event;
-import net.covers1624.eventbus.util.Utils;
 import org.jetbrains.annotations.ApiStatus;
 
 import java.lang.reflect.Method;

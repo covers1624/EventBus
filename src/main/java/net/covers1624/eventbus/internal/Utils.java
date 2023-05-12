@@ -1,4 +1,4 @@
-package net.covers1624.eventbus.util;
+package net.covers1624.eventbus.internal;
 
 import net.covers1624.quack.collection.FastStream;
 import net.covers1624.quack.io.IOUtils;
@@ -22,7 +22,7 @@ import static java.util.Objects.requireNonNull;
  * Created by covers1624 on 17/9/22.
  */
 @ApiStatus.Internal
-public class Utils {
+class Utils {
 
     public static String asmName(Class<?> clazz) {
         return asmName(clazz.getName());

@@ -13,8 +13,8 @@ import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
 import java.util.concurrent.atomic.AtomicInteger;
 
-import static net.covers1624.eventbus.util.Utils.debugWriteClass;
-import static net.covers1624.eventbus.util.Utils.synClassName;
+import static net.covers1624.eventbus.internal.Utils.debugWriteClass;
+import static net.covers1624.eventbus.internal.Utils.synClassName;
 import static org.objectweb.asm.Opcodes.*;
 import static org.objectweb.asm.Type.BOOLEAN_TYPE;
 import static org.objectweb.asm.Type.VOID_TYPE;

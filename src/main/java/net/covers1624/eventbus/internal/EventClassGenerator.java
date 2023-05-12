@@ -14,8 +14,8 @@ import java.util.Map;
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.atomic.AtomicInteger;
 
-import static net.covers1624.eventbus.util.Utils.asmName;
-import static net.covers1624.eventbus.util.Utils.debugWriteClass;
+import static net.covers1624.eventbus.internal.Utils.asmName;
+import static net.covers1624.eventbus.internal.Utils.debugWriteClass;
 import static org.objectweb.asm.Opcodes.*;
 import static org.objectweb.asm.Type.VOID_TYPE;
 
