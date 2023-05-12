@@ -1,10 +1,8 @@
 package net.covers1624.eventbus.internal;
 
-import net.covers1624.eventbus.api.CancelableEvent;
-import net.covers1624.eventbus.api.Event;
-import net.covers1624.eventbus.api.GenericEvent;
-import net.covers1624.eventbus.internal.EventField;
-import net.covers1624.eventbus.internal.EventFieldExtractor;
+import net.covers1624.eventbus.CancelableEvent;
+import net.covers1624.eventbus.Event;
+import net.covers1624.eventbus.GenericEvent;
 import org.junit.jupiter.api.Disabled;
 import org.junit.jupiter.api.Test;
 

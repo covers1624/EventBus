@@ -1,6 +1,6 @@
 package net.covers1624.eventbus.test;
 
-import net.covers1624.eventbus.api.Environment;
+import net.covers1624.eventbus.Environment;
 import net.covers1624.eventbus.util.AccessibleClassLoader;
 import net.covers1624.eventbus.util.ThreadContextClassLoader;
 import org.jetbrains.annotations.Nullable;

@@ -1,4 +1,4 @@
-package net.covers1624.eventbus.api;
+package net.covers1624.eventbus;
 
 /**
  * Created by covers1624 on 10/4/21.

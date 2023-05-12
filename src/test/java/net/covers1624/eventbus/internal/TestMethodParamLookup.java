@@ -1,7 +1,7 @@
 package net.covers1624.eventbus.internal;
 
-import net.covers1624.eventbus.api.EventListener;
-import net.covers1624.eventbus.api.ParameterNames;
+import net.covers1624.eventbus.EventListener;
+import net.covers1624.eventbus.ParameterNames;
 import net.covers1624.eventbus.test.TestBase;
 import org.junit.jupiter.api.Test;
 

@@ -1,4 +1,4 @@
-package net.covers1624.eventbus.api;
+package net.covers1624.eventbus;
 
 import org.jetbrains.annotations.Nullable;
 

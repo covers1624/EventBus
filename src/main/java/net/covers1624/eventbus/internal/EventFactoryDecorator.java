@@ -1,7 +1,7 @@
 package net.covers1624.eventbus.internal;
 
-import net.covers1624.eventbus.api.Environment;
-import net.covers1624.eventbus.api.EventFactory;
+import net.covers1624.eventbus.Environment;
+import net.covers1624.eventbus.EventFactory;
 import net.covers1624.quack.asm.ClassBuilder;
 import net.covers1624.quack.asm.ClassBuilder.FieldBuilder;
 import net.covers1624.quack.util.SneakyUtils;

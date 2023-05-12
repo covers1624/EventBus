@@ -1,7 +1,6 @@
 package net.covers1624.eventbus.internal;
 
-import net.covers1624.eventbus.api.*;
-import net.covers1624.eventbus.util.AccessibleClassLoader;
+import net.covers1624.eventbus.*;
 import net.covers1624.eventbus.util.ThreadContextClassLoader;
 import org.jetbrains.annotations.ApiStatus;
 import org.jetbrains.annotations.Nullable;

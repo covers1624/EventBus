@@ -1,6 +1,6 @@
 package net.covers1624.eventbus.test;
 
-import net.covers1624.eventbus.api.*;
+import net.covers1624.eventbus.*;
 import net.covers1624.eventbus.internal.EventBusImpl;
 import org.junit.jupiter.api.Test;
 

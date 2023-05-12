@@ -1,4 +1,4 @@
-package net.covers1624.eventbus.api;
+package net.covers1624.eventbus;
 
 /**
  * Root of all event classes.

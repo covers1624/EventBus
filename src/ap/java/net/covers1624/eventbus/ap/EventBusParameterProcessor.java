@@ -1,8 +1,8 @@
 package net.covers1624.eventbus.ap;
 
-import net.covers1624.eventbus.api.EventFactory;
-import net.covers1624.eventbus.api.EventListener;
-import net.covers1624.eventbus.api.SubscribeEvent;
+import net.covers1624.eventbus.EventFactory;
+import net.covers1624.eventbus.EventListener;
+import net.covers1624.eventbus.SubscribeEvent;
 import net.covers1624.quack.collection.FastStream;
 
 import javax.annotation.processing.*;

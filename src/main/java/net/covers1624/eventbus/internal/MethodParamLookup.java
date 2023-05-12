@@ -2,8 +2,8 @@ package net.covers1624.eventbus.internal;
 
 import com.google.common.collect.ImmutableList;
 import com.google.common.collect.ImmutableMap;
-import net.covers1624.eventbus.api.Environment;
-import net.covers1624.eventbus.api.ParameterNames;
+import net.covers1624.eventbus.Environment;
+import net.covers1624.eventbus.ParameterNames;
 import net.covers1624.quack.collection.FastStream;
 import org.jetbrains.annotations.ApiStatus;
 import org.jetbrains.annotations.Nullable;

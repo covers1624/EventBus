@@ -1,4 +1,4 @@
-package net.covers1624.eventbus.api;
+package net.covers1624.eventbus;
 
 /**
  * Responsible for declaring functions for invoking an event.

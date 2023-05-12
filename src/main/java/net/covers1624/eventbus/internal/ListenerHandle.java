@@ -1,7 +1,7 @@
 package net.covers1624.eventbus.internal;
 
 import com.google.common.collect.ImmutableList;
-import net.covers1624.eventbus.api.EventPriority;
+import net.covers1624.eventbus.EventPriority;
 import org.jetbrains.annotations.ApiStatus;
 import org.jetbrains.annotations.Nullable;
 

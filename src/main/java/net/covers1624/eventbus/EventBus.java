@@ -1,4 +1,4 @@
-package net.covers1624.eventbus.api;
+package net.covers1624.eventbus;
 
 import net.covers1624.eventbus.internal.EventBusImpl;
 
