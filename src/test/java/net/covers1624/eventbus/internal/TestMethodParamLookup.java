@@ -1,6 +1,7 @@
 package net.covers1624.eventbus.internal;
 
-import net.covers1624.eventbus.api.Named;
+import net.covers1624.eventbus.api.EventListener;
+import net.covers1624.eventbus.api.ParameterNames;
 import net.covers1624.eventbus.test.TestBase;
 import org.junit.jupiter.api.Test;
 
@@ -76,12 +77,25 @@ public class TestMethodParamLookup extends TestBase {
         assertEquals("three", onEventNamedNames.get(2));
     }
 
+    @Test
+    public void testAnnotationProcessorInterface() throws Throwable {
+        Class<?> clazz = TestInterface2.class;
+
+        MethodParamLookup lookup = new MethodParamLookup(WITH_RESOURCES);
+        List<String> onEventNamedNames = lookup.getMethodParams(clazz.getMethod("fire", String.class, String.class, List.class));
+        assertEquals(3, onEventNamedNames.size());
+        assertEquals("one", onEventNamedNames.get(0));
+        assertEquals("two", onEventNamedNames.get(1));
+        assertEquals("three", onEventNamedNames.get(2));
+    }
+
     public static class TestClass {
 
         public void onEvent(String a, String b, List<String> c) {
         }
 
-        public void onEventNamed(@Named ("one") String a, @Named ("two") String b, @Named ("three") List<String> c) {
+        @ParameterNames({"one", "two", "three"})
+        public void onEventNamed(String a, String b, List<String> c) {
         }
     }
 
@@ -89,6 +103,12 @@ public class TestMethodParamLookup extends TestBase {
 
         void fire(String a, String b, List<String> c);
 
-        void fireNamed(@Named ("one") String a, @Named ("two") String b, @Named ("three") List<String> c);
+        @ParameterNames({"one", "two", "three"})
+        void fireNamed(String a, String b, List<String> c);
+    }
+
+    public interface TestInterface2 extends EventListener {
+
+        void fire(String one, String two, List<String> three);
     }
 }

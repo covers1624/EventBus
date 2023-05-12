@@ -53,22 +53,26 @@ public class TestClass extends TestBase {
         abstract class Factory extends EventFactory {
 
             // @Deprecated, use bellow, blah
-            public void fire(@Named ("string") String string, @Named ("double") double d) {
+            @ParameterNames ({"string", "double"})
+            public void fire(String string, double d) {
                 fire(string, 1, d);
             }
 
-            public abstract void fire(@Named ("string") String string, @Named ("int") int i, @Named ("double") double d);
+            @ParameterNames ({"string", "int", "double"})
+            public abstract void fire(String string, int i, double d);
         }
 
         // @Deprecated, use bellow, blah
         interface Listener extends EventListener {
 
-            void fire(@Named ("string") String string, @Named ("double") double d);
+            @ParameterNames ({"string", "double"})
+            void fire(String string, double d);
         }
 
         interface ListenerV2 extends EventListener {
 
-            void fire(@Named ("string") String string, @Named ("int") int i, @Named ("double") double d);
+            @ParameterNames ({"string", "int", "double"})
+            void fire(String string, int i, double d);
         }
     }
 

@@ -1048,22 +1048,12 @@ public class LargeNumberOfEventSubscribersTest extends TestBase {
 
         abstract class Factory extends EventFactory {
 
-            public abstract void fire(
-                    @Named ("string1") String string1,
-                    @Named ("string2") String string2,
-                    @Named ("string3") String string3,
-                    @Named ("string4") String string4,
-                    @Named ("string5") String string5);
+            public abstract void fire(String string1, String string2, String string3, String string4, String string5);
         }
 
         interface Listener extends EventListener {
 
-            void fire(
-                    @Named ("string1") String string1,
-                    @Named ("string2") String string2,
-                    @Named ("string3") String string3,
-                    @Named ("string4") String string4,
-                    @Named ("string5") String string5);
+            void fire(String string1, String string2, String string3, String string4, String string5);
         }
     }
 }

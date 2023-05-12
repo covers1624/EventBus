@@ -3,7 +3,7 @@ package net.covers1624.eventbus.internal;
 import com.google.common.collect.ImmutableList;
 import com.google.common.collect.ImmutableMap;
 import net.covers1624.eventbus.api.Environment;
-import net.covers1624.eventbus.api.Named;
+import net.covers1624.eventbus.api.ParameterNames;
 import net.covers1624.quack.collection.FastStream;
 import org.jetbrains.annotations.Nullable;
 import org.objectweb.asm.*;
@@ -15,7 +15,6 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.io.InputStreamReader;
 import java.lang.reflect.Method;
-import java.lang.reflect.Parameter;
 import java.nio.charset.StandardCharsets;
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -43,8 +42,7 @@ class MethodParamLookup {
     /**
      * Get the parameter names for a given {@link Method}.
      * <p>
-     * Will first try and load a full sequence of {@link Named} parameters. All parameters
-     * must be annotated or the annotations are ignored.
+     * First it will try and load the {@link ParameterNames} annotation on the method.
      * <p>
      * Next, it will try loading from the META-INF folder, with metadata extracted at compile time
      * via the accompanying annotation processor.
@@ -55,7 +53,7 @@ class MethodParamLookup {
      *
      * @param method The method to find parameters for.
      * @return The found parameter names in order. Otherwise, an empty list.
-     * @see Named
+     * @see ParameterNames
      */
     public List<String> getMethodParams(Method method) {
         synchronized (method) {
@@ -88,21 +86,18 @@ class MethodParamLookup {
 
     @Nullable
     private List<String> loadNamedParams(Method method) {
-        Parameter[] parameters = method.getParameters();
-        List<String> params = new ArrayList<>(parameters.length);
-        for (Parameter parameter : parameters) {
-            Named named = parameter.getAnnotation(Named.class);
-            if (named != null) {
-                params.add(named.value().intern());
-            }
-        }
+        ParameterNames names = method.getAnnotation(ParameterNames.class);
+        if (names == null) return null;
 
-        if (params.isEmpty()) return null;
-        if (params.size() != parameters.length) {
+        String[] nameStrings = names.value();
+        if (nameStrings.length != method.getParameterCount()) {
             LOGGER.error("Method {}.{} must have Named annotation on all parameters.", method.getDeclaringClass().getName(), method.getName());
             return null;
         }
-        return ImmutableList.copyOf(params);
+
+        return FastStream.of(nameStrings)
+                .map(String::intern)
+                .toImmutableList();
     }
 
     private Map<String, List<String>> loadMetaParams(Class<?> clazz) {
