@@ -12,8 +12,8 @@ import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
 import java.util.concurrent.atomic.AtomicInteger;
 
-import static java.util.Objects.requireNonNull;
-import static net.covers1624.eventbus.util.Utils.*;
+import static net.covers1624.eventbus.util.Utils.debugWriteClass;
+import static net.covers1624.eventbus.util.Utils.synClassName;
 import static org.objectweb.asm.Opcodes.*;
 import static org.objectweb.asm.Type.BOOLEAN_TYPE;
 import static org.objectweb.asm.Type.VOID_TYPE;
@@ -21,7 +21,7 @@ import static org.objectweb.asm.Type.VOID_TYPE;
 /**
  * Created by covers1624 on 17/9/22.
  */
-public class EventFactoryDecorator {
+class EventFactoryDecorator {
 
     private static final AtomicInteger COUNTER = new AtomicInteger();
 
@@ -82,7 +82,7 @@ public class EventFactoryDecorator {
             gen.ret();
         });
 
-        classGen.addMethod(ACC_PUBLIC | ACC_FINAL, "setFactory", Type.getMethodType(VOID_TYPE, OBJECT_TYPE)).withBody( gen -> {
+        classGen.addMethod(ACC_PUBLIC | ACC_FINAL, "setFactory", Type.getMethodType(VOID_TYPE, OBJECT_TYPE)).withBody(gen -> {
             gen.loadThis();
             gen.loadParam(0);
             gen.typeInsn(CHECKCAST, factoryType);
@@ -93,20 +93,20 @@ public class EventFactoryDecorator {
             gen.ret();
         });
 
-        classGen.addMethod(ACC_PUBLIC | ACC_FINAL, "setDirty", Type.getMethodType(VOID_TYPE)).withBody( gen -> {
+        classGen.addMethod(ACC_PUBLIC | ACC_FINAL, "setDirty", Type.getMethodType(VOID_TYPE)).withBody(gen -> {
             gen.loadThis();
             gen.ldcInt(1);
             gen.putField(dirtyField);
             gen.ret();
         });
 
-        classGen.addMethod(ACC_PUBLIC | ACC_FINAL, "isDirty", Type.getMethodType(BOOLEAN_TYPE)).withBody( gen -> {
+        classGen.addMethod(ACC_PUBLIC | ACC_FINAL, "isDirty", Type.getMethodType(BOOLEAN_TYPE)).withBody(gen -> {
             gen.loadThis();
             gen.getField(dirtyField);
             gen.ret();
         });
 
-        classGen.addMethod(ACC_PUBLIC | ACC_FINAL, forwardMethod.getName(), Type.getType(forwardMethod)).withBody( gen -> {
+        classGen.addMethod(ACC_PUBLIC | ACC_FINAL, forwardMethod.getName(), Type.getType(forwardMethod)).withBody(gen -> {
             Label fire = new Label();
             Label compute = new Label();
 

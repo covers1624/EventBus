@@ -1,7 +1,8 @@
-package net.covers1624.eventbus.util;
+package net.covers1624.eventbus.internal;
 
 import com.google.common.collect.ImmutableMap;
 import net.covers1624.eventbus.api.Event;
+import net.covers1624.eventbus.util.Utils;
 
 import java.lang.reflect.Method;
 import java.lang.reflect.Modifier;
@@ -20,7 +21,7 @@ import java.util.concurrent.ConcurrentHashMap;
  * <p>
  * Created by covers1624 on 10/4/21.
  */
-public class EventFieldExtractor {
+class EventFieldExtractor {
 
     // TODO use a Guava cache with access expiry.
     private final static Map<Class<?>, Map<String, EventField>> eventFields = new ConcurrentHashMap<>();

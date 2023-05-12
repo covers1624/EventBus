@@ -10,7 +10,7 @@ import java.util.List;
 /**
  * Created by covers1624 on 17/9/22.
  */
-public class ListenerHandle {
+class ListenerHandle {
 
     @Nullable
     public final Object instance;

@@ -1,8 +1,6 @@
 package net.covers1624.eventbus.internal;
 
 import net.covers1624.eventbus.api.*;
-import net.covers1624.eventbus.util.EventField;
-import net.covers1624.eventbus.util.EventFieldExtractor;
 import net.covers1624.eventbus.util.Utils;
 import net.covers1624.quack.collection.FastStream;
 import org.jetbrains.annotations.Nullable;

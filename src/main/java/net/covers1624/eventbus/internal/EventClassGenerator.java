@@ -1,4 +1,4 @@
-package net.covers1624.eventbus.util;
+package net.covers1624.eventbus.internal;
 
 import net.covers1624.eventbus.api.Environment;
 import net.covers1624.eventbus.api.Event;
@@ -21,7 +21,7 @@ import static org.objectweb.asm.Type.VOID_TYPE;
 /**
  * Created by covers1624 on 11/4/21.
  */
-public class EventClassGenerator {
+class EventClassGenerator {
 
     private static final Type OBJECT_TYPE = Type.getType(Object.class);
 

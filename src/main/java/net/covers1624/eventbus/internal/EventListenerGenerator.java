@@ -2,8 +2,6 @@ package net.covers1624.eventbus.internal;
 
 import net.covers1624.eventbus.api.Environment;
 import net.covers1624.eventbus.api.Event;
-import net.covers1624.eventbus.util.EventClassGenerator;
-import net.covers1624.eventbus.util.EventField;
 import net.covers1624.quack.asm.ClassBuilder;
 import net.covers1624.quack.asm.ClassBuilder.FieldBuilder;
 import net.covers1624.quack.asm.MethodBuilder.BodyGenerator.Var;
@@ -27,7 +25,7 @@ import static org.objectweb.asm.Opcodes.*;
 /**
  * Created by covers1624 on 18/9/22.
  */
-public class EventListenerGenerator {
+class EventListenerGenerator {
 
     private static final AtomicInteger COUNTER = new AtomicInteger();
 

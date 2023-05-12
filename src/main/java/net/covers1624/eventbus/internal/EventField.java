@@ -1,4 +1,4 @@
-package net.covers1624.eventbus.util;
+package net.covers1624.eventbus.internal;
 
 import org.jetbrains.annotations.Nullable;
 
@@ -13,7 +13,7 @@ import java.util.StringJoiner;
  * <p>
  * Created by covers1624 on 10/4/21.
  */
-public class EventField {
+class EventField {
 
     public final String name;
     public final Class<?> type;
