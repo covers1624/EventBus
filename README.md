@@ -1,3 +1,3 @@
 # EventBus
-Small and eficient Java event library.
+Small and efficient Java event library.
 // TODO this
