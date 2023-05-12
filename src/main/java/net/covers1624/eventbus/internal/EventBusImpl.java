@@ -1,11 +1,14 @@
 package net.covers1624.eventbus.internal;
 
 import net.covers1624.eventbus.api.*;
+import net.covers1624.eventbus.util.AccessibleClassLoader;
+import net.covers1624.eventbus.util.ThreadContextClassLoader;
 import org.jetbrains.annotations.ApiStatus;
 import org.jetbrains.annotations.Nullable;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import java.io.InputStream;
 import java.lang.reflect.Method;
 import java.lang.reflect.Modifier;
 import java.util.List;
@@ -27,6 +30,10 @@ public class EventBusImpl implements EventBus {
     final MethodParamLookup paramLookup;
 
     private final Map<Class<? extends Event>, EventListenerList> eventLists = new ConcurrentHashMap<>();
+
+    public EventBusImpl() {
+        this(new DefaultEnvironment());
+    }
 
     public EventBusImpl(Environment environment) {
         this.environment = environment;
@@ -129,5 +136,20 @@ public class EventBusImpl implements EventBus {
 
         LOGGER.info("Registered event class lambda event listener for {}.", list.eventInterface.getName());
         list.registerEventConsumerListener(priority, func);
+    }
+
+    private static class DefaultEnvironment implements Environment {
+
+        private final ThreadContextClassLoader cl = new ThreadContextClassLoader();
+
+        @Override
+        public @Nullable InputStream getResourceStream(String resource) {
+            return EventBusImpl.class.getResourceAsStream(resource);
+        }
+
+        @Override
+        public Class<?> defineClass(String cName, byte[] bytes) {
+            return cl.defineClass(cName, bytes);
+        }
     }
 }

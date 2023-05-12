@@ -1,5 +1,7 @@
 package net.covers1624.eventbus.api;
 
+import net.covers1624.eventbus.internal.EventBusImpl;
+
 import java.util.function.Consumer;
 
 /**
@@ -8,6 +10,31 @@ import java.util.function.Consumer;
  * Created by covers1624 on 22/3/21.
  */
 public interface EventBus {
+
+    /**
+     * Create an {@link EventBus}.
+     * <p>
+     * The default {@link Environment} extension provided to this
+     * bus should be sufficient for simple applications, where all
+     * resources and classes are on the same classpath the event bus
+     * is on. If your environment has custom requirements, you may use
+     * {@link #create(Environment)} specifying a custom environment.
+     *
+     * @return The {@link EventBus} instance.
+     */
+    static EventBus create() {
+        return new EventBusImpl();
+    }
+
+    /**
+     * Create an {@link EventBus} instance with a custom environment.
+     *
+     * @param env The {@link Environment} to use.
+     * @return The {@link EventBus}.
+     */
+    static EventBus create(Environment env) {
+        return new EventBusImpl(env);
+    }
 
     /**
      * Construct an {@link EventFactory} instance for firing the given event.
