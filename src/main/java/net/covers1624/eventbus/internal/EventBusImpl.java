@@ -42,7 +42,7 @@ public class EventBusImpl implements EventBus {
     @Override
     public <T extends EventFactory> T constructFactory(Class<T> factoryClass, Class<? extends Event> eventClass) {
         EventListenerList list = getListenerList(eventClass);
-        if (factoryClass == list.eventFactory) {
+        if (factoryClass != list.eventFactory) {
             throw new IllegalArgumentException("Invalid EventFactory supplied. Expected: " + list.eventFactory.getName() + ". Got: " + factoryClass.getName());
         }
 
