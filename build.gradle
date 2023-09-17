@@ -9,7 +9,7 @@ java {
     withSourcesJar()
 }
 
-group 'org.example'
+group 'net.covers1624'
 version '0.1.0'
 
 version = "$version." + (System.getenv("BUILD_NUMBER") ?: "1")
